@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using iread_notifications_ms.Web.Service;
 
 namespace iread_notifications_ms
 {
@@ -28,6 +29,7 @@ namespace iread_notifications_ms
         {
 
             services.AddControllers();
+            services.AddSingleton<IFirebaseMessagingService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "iread_notifications_ms", Version = "v1" });
