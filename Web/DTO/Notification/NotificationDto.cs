@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace iread_notifications_ms.Web.DTO.Notification
+namespace iread_notifications_ms.Web.DTO
 {
     public class NotificationDto
     {
@@ -10,6 +10,6 @@ namespace iread_notifications_ms.Web.DTO.Notification
         {
             get; set;
         }
-        public Dictionary<string, string> data { get; set; }
+        // public Dictionary<string, string> data { get; set; }
     }
 }

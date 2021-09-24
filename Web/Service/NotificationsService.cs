@@ -13,7 +13,7 @@ namespace iread_notifications_ms.Web.Service
 
         private readonly IPublicRepo _publicRepo;
 
-        NotificationService(IPublicRepo publicRepo)
+        public NotificationService(IPublicRepo publicRepo)
         {
             _publicRepo = publicRepo;
         }

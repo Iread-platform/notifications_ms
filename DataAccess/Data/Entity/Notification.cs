@@ -15,7 +15,7 @@ namespace iread_notifications_ms.DataAccess.Data.Entity
         }
         public bool IsSent { get; set; }
 
-        public Dictionary<String, String> data { get; set; }
+        // public Dictionary<String, String> data { get; set; }
     }
 
 }

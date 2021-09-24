@@ -13,7 +13,7 @@ namespace iread_notifications_ms.DataAccess.Repository
         private readonly AppDbContext _context;
         public NotificationRepo(AppDbContext context)
         {
-            AppDbContext _context = context;
+            _context = context;
 
         }
 

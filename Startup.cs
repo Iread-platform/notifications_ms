@@ -7,11 +7,15 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
 using System.Collections.Generic;
+using AutoMapper;
+using Consul;
 
 
 using iread_notifications_ms.Web.Service;
-
+using iread_notifications_ms.Web.Profile;
+using iread_notifications_ms.Web.Utils;
 using iread_notifications_ms.DataAccess;
 using iread_notifications_ms.DataAccess.Repository;
 
@@ -27,7 +31,11 @@ namespace iread_notifications_ms
 
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            Configuration = new ConfigurationBuilder()
+             .AddJsonFile(Directory.GetCurrentDirectory() + "/Properties/launchSettings.json", optional: true, reloadOnChange: true)
+             .AddJsonFile(Directory.GetCurrentDirectory() + "/appsettings.json", optional: true, reloadOnChange: true)
+             .AddEnvironmentVariables()
+             .Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -42,6 +50,12 @@ namespace iread_notifications_ms
            {
                options.UseLoggerFactory(_myLoggerFactory).UseMySQL(Configuration.GetConnectionString("DefaultConnection"));
            });
+            //         services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
+            //    {
+            //        var address = Configuration.GetValue<string>("ConsulConfig:Host");
+            //        consulConfig.Address = new System.Uri(address);
+            //    }
+            //    ));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "iread_notifications_ms", Version = "v1" });
@@ -76,8 +90,15 @@ namespace iread_notifications_ms
 
             // Inject repos and services.
             services.AddScoped<IPublicRepo, PublicRepo>();
-            services.AddSingleton<IFirebaseMessagingService>();
+            services.AddScoped<IFirebaseMessagingService, FirebaseMessagingService>();
             services.AddScoped<NotificationService>();
+
+            IMapper mapper = new MapperConfiguration(config =>
+            {
+                config.AddProfile<AutoMapperProfile>();
+            }).CreateMapper();
+            services.AddSingleton(mapper);
+            // services.AddHttpClient<IConsulHttpClientService, ConsulHttpClientService>();
 
         }
 
@@ -91,9 +112,15 @@ namespace iread_notifications_ms
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "iread_notifications_ms v1"));
             }
 
-            app.UseHttpsRedirection();
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
+                context.Database.Migrate();
+            }
+
 
             app.UseRouting();
+            app.UseCors("_myAllowSpecificOrigins");
 
             app.UseAuthorization();
 
@@ -101,6 +128,8 @@ namespace iread_notifications_ms
             {
                 endpoints.MapControllers();
             });
+            // app.UseConsul(Configuration);
+
         }
     }
 }

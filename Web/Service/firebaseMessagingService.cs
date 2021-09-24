@@ -5,6 +5,8 @@ using Google.Apis.FirebaseCloudMessaging;
 using Google.Apis.Auth.OAuth2;
 using System.Threading.Tasks;
 
+using NotificationEntity = iread_notifications_ms.DataAccess.Data.Entity.Notification;
+
 namespace iread_notifications_ms.Web.Service
 {
 
@@ -23,9 +25,9 @@ namespace iread_notifications_ms.Web.Service
         {
             init();
         }
-        public async Task<string> sendMessage(string title, string notificationBody, string token, Dictionary<string, string> data = null)
+        public async Task<string> sendMessage(NotificationEntity notification, Dictionary<string, string> data = null)
         {
-            Message message = SetupNotificationMessage(title, notificationBody, token, data);
+            Message message = SetupNotificationMessage(notification, data);
             string response = await m_messaging.SendAsync(message);
             return response;
         }
@@ -45,15 +47,15 @@ namespace iread_notifications_ms.Web.Service
             return batchResponse;
         }
 
-        public Message SetupNotificationMessage(string title, string notificationBody, string token, Dictionary<string, string> data)
+        public Message SetupNotificationMessage(NotificationEntity notification, Dictionary<string, string> data)
         {
             return new Message()
             {
-                Token = token,
+                Token = notification.Token,
                 Notification = new Notification()
                 {
-                    Body = notificationBody,
-                    Title = title,
+                    Body = notification.Body,
+                    Title = notification.Title,
 
 
                 },
