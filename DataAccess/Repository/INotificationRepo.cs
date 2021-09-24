@@ -9,7 +9,7 @@ namespace iread_notifications_ms.DataAccess.Repository
     public interface INotificationRepo
     {
         public Task<Notification> GetById(string id);
-        public void Add(Notification notification);
+        public Task<Notification> Add(Notification notification);
         public List<Notification> GetAll();
         public Task<List<Notification>> GetByDevice(string token);
         public Task<bool> IsSent(string id);

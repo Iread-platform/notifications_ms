@@ -24,9 +24,9 @@ namespace iread_notifications_ms.DataAccess.Repository
 
         }
 
-        public async void Add(Notification notification)
+        public async Task<Notification> Add(Notification notification)
         {
-            await _context.Notifications.AddAsync(notification);
+            return (await _context.Notifications.AddAsync(notification)).Entity;
         }
 
         public async Task<List<Notification>> GetByDevice(string token)
