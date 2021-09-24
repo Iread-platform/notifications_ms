@@ -5,6 +5,7 @@ namespace iread_notifications_ms.DataAccess.Data.Entity
 {
     public class Notification
     {
+        public int Id { get; set; }
         public String Title { get; set; }
 
         public String Body
@@ -13,7 +14,7 @@ namespace iread_notifications_ms.DataAccess.Data.Entity
         }
         public bool IsSent { get; set; }
 
-        public Dictionary<String, string> data { get; set; }
+        public Dictionary<String, String> data { get; set; }
     }
 
 }
