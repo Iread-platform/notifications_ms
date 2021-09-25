@@ -10,8 +10,10 @@ namespace iread_notifications_ms.DataAccess.Repository
     {
         public Task<Notification> GetById(string id);
         public Task<Notification> Add(Notification notification);
+        public Task<SingleNotification> SendSingle(SingleNotification notification);
+        public Task<BroadcastNotification> Broadcast(BroadcastNotification notification);
         public List<Notification> GetAll();
-        public Task<List<Notification>> GetByDevice(string token);
+        public Task<List<SingleNotification>> GetByDevice(string token);
         public Task<bool> IsSent(string id);
         Task<bool> _Exists(string id);
     }

@@ -10,10 +10,22 @@ namespace iread_notifications_ms.DataAccess
         {
         }
 
+        public DbSet<SingleNotification> SingleNotifications
+        {
+            get; set;
+
+        }
+
         public DbSet<Notification> Notifications
         {
             get; set;
 
         }
+        public DbSet<BroadcastNotification> BroadcastNotifications
+        {
+            get; set;
+
+        }
+
     }
 }

@@ -51,7 +51,7 @@ namespace iread_notifications_ms.Web.Service
         {
             return new Message()
             {
-                Token = notification.Token,
+                Token = "dotnet ef migrations add Inheritance",
                 Notification = new Notification()
                 {
                     Body = notification.Body,

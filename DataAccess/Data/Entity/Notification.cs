@@ -16,7 +16,6 @@ namespace iread_notifications_ms.DataAccess.Data.Entity
         public int Id { get; set; }
         public String Title { get; set; }
         public DateTime Created { get; set; }
-        public String Token { get; set; }
 
         public String Body
         {

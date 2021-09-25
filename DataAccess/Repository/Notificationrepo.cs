@@ -6,10 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace iread_notifications_ms.DataAccess.Repository
 {
-
     class NotificationRepo : INotificationRepo
     {
-
         private readonly AppDbContext _context;
         public NotificationRepo(AppDbContext context)
         {
@@ -17,7 +15,21 @@ namespace iread_notifications_ms.DataAccess.Repository
 
         }
 
+        public async Task<List<SingleNotification>> GetByDevice(string token)
+        {
+            return await _context.SingleNotifications.Where((notification) => notification.Token.Equals(token)).ToListAsync();
+        }
 
+
+        public async Task<SingleNotification> SendSingle(SingleNotification notification)
+        {
+            return (await _context.SingleNotifications.AddAsync(notification)).Entity;
+        }
+        public async Task<BroadcastNotification> Broadcast(BroadcastNotification notification)
+        {
+            return (await _context.BroadcastNotifications.AddAsync(notification)).Entity;
+
+        }
         public List<Notification> GetAll()
         {
             return _context.Notifications.ToList();
@@ -29,22 +41,14 @@ namespace iread_notifications_ms.DataAccess.Repository
             return (await _context.Notifications.AddAsync(notification)).Entity;
         }
 
-        public async Task<List<Notification>> GetByDevice(string token)
-        {
-
-            return await _context.Notifications.Where((notification) => notification.Token.Equals(token)).ToListAsync();
-        }
-
         public async Task<Notification> GetById(string id)
         {
             return await _context.Notifications.Where((notification) => notification.Id.Equals(id)).FirstAsync();
-
         }
 
         public async Task<bool> IsSent(string id)
         {
             return (await _context.Notifications.Where((notification) => notification.Id.Equals(id)).FirstAsync()).IsSent;
-
         }
 
         public async Task<bool> _Exists(string id)
