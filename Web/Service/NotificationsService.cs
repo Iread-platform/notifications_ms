@@ -21,8 +21,23 @@ namespace iread_notifications_ms.Web.Service
         {
             try
             {
-                Notification addedNotification =
-            await _publicRepo.NotificationRepo.Add(notification);
+                Notification addedNotification;
+                if (notification is BroadcastNotification)
+                {
+
+                    addedNotification = await _publicRepo.NotificationRepo.Broadcast(notification as BroadcastNotification);
+                }
+                else if (notification is SingleNotification)
+                {
+                    addedNotification = await _publicRepo.NotificationRepo.SendSingle(notification as SingleNotification);
+
+                }
+                else
+                {
+
+                    addedNotification = await _publicRepo.NotificationRepo.Add(notification);
+                }
+
                 return addedNotification;
 
             }
@@ -36,6 +51,7 @@ namespace iread_notifications_ms.Web.Service
                 return null;
             }
         }
+
     }
 }
 

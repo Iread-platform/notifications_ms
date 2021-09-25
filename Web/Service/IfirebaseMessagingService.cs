@@ -1,17 +1,20 @@
 using FirebaseAdmin.Messaging;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using NotificationEntity = iread_notifications_ms.DataAccess.Data.Entity.Notification;
+
+using iread_notifications_ms.DataAccess.Data.Entity;
 
 namespace iread_notifications_ms.Web.Service
 {
 
     public interface IFirebaseMessagingService
     {
-        Message SetupNotificationMessage(NotificationEntity notification, Dictionary<string, string> data);
+        Message SetupNotificationMessage(SingleNotification notification, Dictionary<string, string> data);
 
-        Task<string> sendMessage(NotificationEntity notification, Dictionary<string, string> data);
+        Task<string> sendMessage(SingleNotification notification, Dictionary<string, string> data);
+        Task<string> SendBoradcast(BroadcastNotification notification, Dictionary<string, string> data);
 
+        Task<TopicManagementResponse> SubscribeToTopic(List<string> tokens, string topic);
         void init();
 
     }

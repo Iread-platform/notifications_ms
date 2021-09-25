@@ -29,7 +29,7 @@ namespace iread_notifications_ms.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> SendNotification([FromBody] NotificationDto notificationDto)
+        public async Task<IActionResult> SendSingleNotification([FromBody] SingletNotificationDto notificationDto)
         {
             if (notificationDto == null)
             {
@@ -39,12 +39,11 @@ namespace iread_notifications_ms.Controllers
             {
                 return BadRequest(UserMessages.ModelStateParser(ModelState));
             }
-            Notification Addednotification = await _notificationService.Sendnotification(_mapper.Map<Notification>(notificationDto));
+            SingleNotification Addednotification = await _notificationService.Sendnotification(_mapper.Map<SingleNotification>(notificationDto)) as SingleNotification;
             if (Addednotification != null)
             {
                 try
                 {
-
                     string result = await _firebaseMessagingService.sendMessage(Addednotification, null);
                 }
                 catch (System.Exception)
@@ -53,6 +52,37 @@ namespace iread_notifications_ms.Controllers
                 }
 
 
+            }
+            return null;
+
+        }
+
+        [HttpPost("BroadCast")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Broadcast([FromBody] BroadcastNotificationDto notificationDto)
+        {
+            if (notificationDto == null)
+            {
+                return BadRequest(ModelState);
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(UserMessages.ModelStateParser(ModelState));
+            }
+            BroadcastNotification Addednotification = await _notificationService.Sendnotification(_mapper.Map<BroadcastNotification>(notificationDto)) as BroadcastNotification;
+            if (Addednotification != null)
+            {
+                try
+                {
+
+                    string result = await _firebaseMessagingService.SendBoradcast(Addednotification, null);
+                }
+                catch (System.Exception)
+                {
+
+                }
             }
             return null;
 
