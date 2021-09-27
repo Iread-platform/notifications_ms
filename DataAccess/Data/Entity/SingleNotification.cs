@@ -10,7 +10,6 @@ namespace iread_notifications_ms.DataAccess.Data.Entity
     [Table("SingleNotifications")]
     public class SingleNotification : Notification
     {
-        [Required]
         public string Token { get; set; }
         public List<DeviceNotification> DeviceNotifications { get; set; }
     }

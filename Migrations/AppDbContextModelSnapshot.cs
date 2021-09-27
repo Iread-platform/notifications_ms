@@ -17,6 +17,37 @@ namespace iread_notifications_ms.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64)
                 .HasAnnotation("ProductVersion", "5.0.10");
 
+            modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.Device", b =>
+                {
+                    b.Property<string>("Token")
+                        .HasColumnType("varchar(767)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Token");
+
+                    b.ToTable("Devices");
+                });
+
+            modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.DeviceNotification", b =>
+                {
+                    b.Property<string>("DeviceToken")
+                        .HasColumnType("varchar(767)");
+
+                    b.Property<int>("NotificationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NotificationsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("DeviceToken", "NotificationId");
+
+                    b.HasIndex("NotificationsId");
+
+                    b.ToTable("DeviceNotifications");
+                });
+
             modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.Notification", b =>
                 {
                     b.Property<int>("Id")
@@ -24,15 +55,17 @@ namespace iread_notifications_ms.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Body")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime");
 
-                    b.Property<bool>("IsSent")
-                        .HasColumnType("tinyint(1)");
+                    b.Property<TimeSpan>("SendAfter")
+                        .HasColumnType("time");
 
                     b.Property<string>("Title")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -60,6 +93,25 @@ namespace iread_notifications_ms.Migrations
                     b.ToTable("SingleNotifications");
                 });
 
+            modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.DeviceNotification", b =>
+                {
+                    b.HasOne("iread_notifications_ms.DataAccess.Data.Entity.Device", "Devices")
+                        .WithMany("DeviceNotifications")
+                        .HasForeignKey("DeviceToken")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("iread_notifications_ms.DataAccess.Data.Entity.SingleNotification", "Notifications")
+                        .WithMany("DeviceNotifications")
+                        .HasForeignKey("NotificationsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Devices");
+
+                    b.Navigation("Notifications");
+                });
+
             modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.BroadcastNotification", b =>
                 {
                     b.HasOne("iread_notifications_ms.DataAccess.Data.Entity.Notification", null)
@@ -76,6 +128,16 @@ namespace iread_notifications_ms.Migrations
                         .HasForeignKey("iread_notifications_ms.DataAccess.Data.Entity.SingleNotification", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.Device", b =>
+                {
+                    b.Navigation("DeviceNotifications");
+                });
+
+            modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.SingleNotification", b =>
+                {
+                    b.Navigation("DeviceNotifications");
                 });
 #pragma warning restore 612, 618
         }

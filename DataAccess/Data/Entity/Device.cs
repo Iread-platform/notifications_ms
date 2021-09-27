@@ -15,7 +15,7 @@ namespace iread_notifications_ms.DataAccess.Data.Entity
         [Required]
         public string Token { get; set; }
         [Required]
-        public string UserId { get; set; }
+        public int UserId { get; set; }
 
         public List<DeviceNotification> DeviceNotifications { get; set; }
     }

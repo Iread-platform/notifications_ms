@@ -10,7 +10,7 @@ namespace iread_notifications_ms.DataAccess.Data.Entity
         [Required]
         public Device Devices { get; set; }
         public string DeviceToken { get; set; }
-        public string NotificationId { get; set; }
+        public int NotificationId { get; set; }
         [Required]
         public SingleNotification Notifications { get; set; }
     }
