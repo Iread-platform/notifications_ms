@@ -22,10 +22,10 @@ namespace iread_notifications_ms.Web.Service
             try
             {
                 Notification addedNotification;
-                if (notification is BroadcastNotification)
+                if (notification is TopicNotification)
                 {
 
-                    addedNotification = await _publicRepo.NotificationRepo.Broadcast(notification as BroadcastNotification);
+                    addedNotification = await _publicRepo.NotificationRepo.Broadcast(notification as TopicNotification);
                 }
                 else if (notification is SingleNotification)
                 {

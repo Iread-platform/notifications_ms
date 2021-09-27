@@ -32,7 +32,7 @@ namespace iread_notifications_ms.Web.Service
             return response;
         }
 
-        public async Task<string> SendBoradcast(Entities.BroadcastNotification notification, Dictionary<string, string> data)
+        public async Task<string> SendTopicNotification(Entities.TopicNotification notification, Dictionary<string, string> data)
         {
             string response = await m_messaging.SendAsync(new Message()
             {

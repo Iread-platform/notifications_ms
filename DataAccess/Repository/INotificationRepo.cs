@@ -11,7 +11,7 @@ namespace iread_notifications_ms.DataAccess.Repository
         public Task<Notification> GetById(string id);
         public Task<Notification> Add(Notification notification);
         public Task<SingleNotification> SendSingle(SingleNotification notification);
-        public Task<BroadcastNotification> Broadcast(BroadcastNotification notification);
+        public Task<TopicNotification> Broadcast(TopicNotification notification);
         public List<Notification> GetAll();
         public Task<List<SingleNotification>> GetByDevice(string token);
         Task<bool> _Exists(string id);

@@ -25,9 +25,9 @@ namespace iread_notifications_ms.DataAccess.Repository
         {
             return (await _context.SingleNotifications.AddAsync(notification)).Entity;
         }
-        public async Task<BroadcastNotification> Broadcast(BroadcastNotification notification)
+        public async Task<TopicNotification> Broadcast(TopicNotification notification)
         {
-            return (await _context.TopicNotification.AddAsync(notification)).Entity;
+            return (await _context.TopicNotifications.AddAsync(notification)).Entity;
 
         }
         public List<Notification> GetAll()
