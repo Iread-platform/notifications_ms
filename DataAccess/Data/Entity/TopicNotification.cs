@@ -10,7 +10,7 @@ namespace iread_notifications_ms.DataAccess.Data.Entity
     [Table("TopicNotification")]
     public class TopicNotification : Notification
     {
-        public string Topic { get; set; }
+        public Topic Topic { get; set; }
     }
 
 }

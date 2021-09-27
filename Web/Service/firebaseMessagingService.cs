@@ -43,8 +43,7 @@ namespace iread_notifications_ms.Web.Service
 
 
                 },
-                // Data = data,
-                Topic = notification.Topic
+                Topic = notification.Topic.Title
             });
             return response;
         }

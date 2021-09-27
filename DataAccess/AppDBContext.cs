@@ -34,10 +34,16 @@ namespace iread_notifications_ms.DataAccess
             get; set;
         }
 
+        public DbSet<Topic> Topics
+        {
+            get; set;
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
             modelBuilder.Entity<DeviceNotification>().HasKey(ES => new { ES.DeviceToken, ES.NotificationId });
+            modelBuilder.Entity<Topic>().HasMany(topic => topic.Notifications).WithOne(Notification => Notification.Topic);
         }
 
     }
