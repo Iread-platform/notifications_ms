@@ -27,7 +27,7 @@ namespace iread_notifications_ms.DataAccess.Repository
         }
         public async Task<BroadcastNotification> Broadcast(BroadcastNotification notification)
         {
-            return (await _context.BroadcastNotifications.AddAsync(notification)).Entity;
+            return (await _context.TopicNotification.AddAsync(notification)).Entity;
 
         }
         public List<Notification> GetAll()
@@ -44,11 +44,6 @@ namespace iread_notifications_ms.DataAccess.Repository
         public async Task<Notification> GetById(string id)
         {
             return await _context.Notifications.Where((notification) => notification.Id.Equals(id)).FirstAsync();
-        }
-
-        public async Task<bool> IsSent(string id)
-        {
-            return (await _context.Notifications.Where((notification) => notification.Id.Equals(id)).FirstAsync()).IsSent;
         }
 
         public async Task<bool> _Exists(string id)

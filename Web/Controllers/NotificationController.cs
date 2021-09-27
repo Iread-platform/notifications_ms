@@ -88,6 +88,37 @@ namespace iread_notifications_ms.Controllers
 
         }
 
+        [HttpPut("AddToken")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> AddToken([FromBody] BroadcastNotificationDto notificationDto)
+        {
+            if (notificationDto == null)
+            {
+                return BadRequest(ModelState);
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(UserMessages.ModelStateParser(ModelState));
+            }
+            BroadcastNotification Addednotification = await _notificationService.Sendnotification(_mapper.Map<BroadcastNotification>(notificationDto)) as BroadcastNotification;
+            if (Addednotification != null)
+            {
+                try
+                {
+
+                    string result = await _firebaseMessagingService.SendBoradcast(Addednotification, null);
+                }
+                catch (System.Exception)
+                {
+
+                }
+            }
+            return null;
+
+        }
+
     }
 
 }

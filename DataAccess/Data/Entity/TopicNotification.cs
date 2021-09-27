@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace iread_notifications_ms.DataAccess.Data.Entity
 {
-    [Table("BroadcastNotifications")]
+    [Table("TopicNotification")]
     public class BroadcastNotification : Notification
     {
         public string Topic { get; set; }

@@ -47,7 +47,7 @@ namespace iread_notifications_ms.Migrations
                     b.Property<string>("Topic")
                         .HasColumnType("text");
 
-                    b.ToTable("BroadcastNotifications");
+                    b.ToTable("TopicNotification");
                 });
 
             modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.SingleNotification", b =>

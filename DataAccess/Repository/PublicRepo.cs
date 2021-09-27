@@ -8,6 +8,8 @@ namespace iread_notifications_ms.DataAccess.Repository
             _context = context;
         }
         private NotificationRepo _notificationRepo;
+        private DeviceRepo _DeviceRepo;
         public INotificationRepo NotificationRepo => _notificationRepo ??= new NotificationRepo(_context);
+        public IDeviceRepo DeviceRepo => _DeviceRepo ??= new DeviceRepo(_context);
     }
 }

@@ -14,7 +14,6 @@ namespace iread_notifications_ms.DataAccess.Repository
         public Task<BroadcastNotification> Broadcast(BroadcastNotification notification);
         public List<Notification> GetAll();
         public Task<List<SingleNotification>> GetByDevice(string token);
-        public Task<bool> IsSent(string id);
         Task<bool> _Exists(string id);
     }
 }

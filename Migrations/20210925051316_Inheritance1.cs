@@ -8,7 +8,7 @@ namespace iread_notifications_ms.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "BroadcastNotifications",
+                name: "TopicNotification",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -17,9 +17,9 @@ namespace iread_notifications_ms.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BroadcastNotifications", x => x.Id);
+                    table.PrimaryKey("PK_TopicNotification", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BroadcastNotifications_Notifications_Id",
+                        name: "FK_TopicNotification_Notifications_Id",
                         column: x => x.Id,
                         principalTable: "Notifications",
                         principalColumn: "Id",
@@ -49,7 +49,7 @@ namespace iread_notifications_ms.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "BroadcastNotifications");
+                name: "TopicNotification");
 
             migrationBuilder.DropTable(
                 name: "SingleNotifications");

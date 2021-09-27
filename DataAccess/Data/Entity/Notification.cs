@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
@@ -14,14 +13,16 @@ namespace iread_notifications_ms.DataAccess.Data.Entity
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Required]
         public int Id { get; set; }
+        [Required]
         public String Title { get; set; }
         public DateTime Created { get; set; }
+        public TimeSpan SendAfter { get; set; }
 
+        [Required]
         public String Body
         {
             get; set;
         }
-        public bool IsSent { get; set; }
     }
 
 }
