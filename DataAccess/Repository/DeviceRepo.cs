@@ -1,4 +1,6 @@
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 using iread_notifications_ms.DataAccess.Data.Entity;
 
@@ -15,13 +17,17 @@ namespace iread_notifications_ms.DataAccess.Repository
 
         public async Task<Device> AddDevice(Device device)
         {
+            if (DeviceExists(device))
+            {
+                return null;
+            }
             return (await _context.Devices.AddAsync(device)).Entity;
         }
 
 
-        public Task<bool> DeviceExists(Device device)
+        public bool DeviceExists(Device device)
         {
-            return new Task<bool>(() => true);
+            return _context.Devices.Where(d => d.Token.Equals(device.Token)).Count() > 0;
         }
     }
 }

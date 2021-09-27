@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using iread_notifications_ms.DataAccess.Data.Entity;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+
+using iread_notifications_ms.DataAccess.Data.Entity;
 
 namespace iread_notifications_ms.DataAccess.Repository
 {

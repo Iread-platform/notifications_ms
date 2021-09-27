@@ -11,7 +11,7 @@ using iread_notifications_ms.DataAccess.Data.Entity;
 namespace iread_notifications_ms.Controllers
 {
     [ApiController]
-    [Route("api/Notification/[controller]")]
+    [Route("api/[controller]")]
     public class NotificationController : ControllerBase
     {
 
@@ -85,39 +85,8 @@ namespace iread_notifications_ms.Controllers
                 }
             }
             return null;
-
         }
 
-        [HttpPut("AddToken")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AddToken([FromBody] TopicNotificationDto notificationDto)
-        {
-            if (notificationDto == null)
-            {
-                return BadRequest(ModelState);
-            }
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(UserMessages.ModelStateParser(ModelState));
-            }
-            TopicNotification Addednotification = await _notificationService.Sendnotification(_mapper.Map<TopicNotification>(notificationDto)) as TopicNotification;
-            if (Addednotification != null)
-            {
-                try
-                {
-
-                    string result = await _firebaseMessagingService.SendTopicNotification(Addednotification, null);
-                }
-                catch (System.Exception)
-                {
-
-                }
-            }
-            return null;
-
-        }
 
     }
 

@@ -8,7 +8,7 @@ namespace iread_notifications_ms.DataAccess.Repository
     public interface IDeviceRepo
     {
         public Task<Device> AddDevice(Device device);
-        public Task<bool> DeviceExists(Device device);
+        public bool DeviceExists(Device device);
 
     }
 }

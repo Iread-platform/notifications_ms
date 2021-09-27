@@ -13,22 +13,25 @@ using iread_notifications_ms.DataAccess.Data.Entity;
 namespace iread_notifications_ms.Controllers
 {
     [ApiController]
-    [Route("api/Reciver/[controller]")]
+    [Route("api/[controller]")]
     public class DeviceController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly NotificationService _notificationService;
+        private readonly DeviceService _deviceService;
         private readonly IFirebaseMessagingService _firebaseMessagingService;
 
 
-        public DeviceController(NotificationService service, IMapper mapper, IFirebaseMessagingService firebaseMessagingService)
+        public DeviceController(DeviceService service, IMapper mapper, IFirebaseMessagingService firebaseMessagingService)
         {
-            _notificationService = service;
+            _deviceService = service;
             _mapper = mapper;
             _firebaseMessagingService = firebaseMessagingService;
         }
 
-        [HttpPost]
+        [HttpPost("Add")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AddDevice([FromBody] AddDeviceDto addDeviceDto)
         {
             if (addDeviceDto == null)
@@ -41,6 +44,12 @@ namespace iread_notifications_ms.Controllers
                 return BadRequest(UserMessages.ModelStateParser(ModelState));
             }
 
+            Device device = await _deviceService.AddDevice(_mapper.Map<Device>(addDeviceDto));
+
+            if (device != null)
+            {
+                return Ok(device);
+            }
             return Ok();
 
         }
