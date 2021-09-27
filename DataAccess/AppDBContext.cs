@@ -43,7 +43,7 @@ namespace iread_notifications_ms.DataAccess
         {
 
             modelBuilder.Entity<DeviceNotification>().HasKey(ES => new { ES.DeviceToken, ES.NotificationId });
-            modelBuilder.Entity<Topic>().HasMany(topic => topic.Notifications).WithOne(Notification => Notification.Topic);
+            modelBuilder.Entity<Topic>().HasMany(topic => topic.Notifications).WithOne(notification => notification.Topic);
         }
 
     }

@@ -12,10 +12,8 @@ namespace iread_notifications_ms.DataAccess.Data.Entity
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Required]
-        public int Id;
-        public string Title;
-
-
+        public int Id { get; set; }
+        public string Title { get; set; }
         public List<TopicNotification> Notifications { get; set; }
     }
 }
