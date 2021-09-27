@@ -12,7 +12,7 @@ namespace iread_notifications_ms.Web.Service
         Message SetupNotificationMessage(SingleNotification notification, Dictionary<string, string> data);
 
         Task<string> sendMessage(SingleNotification notification, Dictionary<string, string> data);
-        Task<string> SendBoradcast(BroadcastNotification notification, Dictionary<string, string> data);
+        Task<string> SendTopicNotification(TopicNotification notification, Dictionary<string, string> data);
 
         Task<TopicManagementResponse> SubscribeToTopic(List<string> tokens, string topic);
         void init();
