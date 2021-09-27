@@ -9,8 +9,8 @@ using iread_notifications_ms.DataAccess;
 namespace iread_notifications_ms.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210927171210_UnRequireToken")]
-    partial class UnRequireToken
+    [Migration("20210927223949_recreate_migrations")]
+    partial class recreate_migrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -75,14 +75,18 @@ namespace iread_notifications_ms.Migrations
                     b.ToTable("Notifications");
                 });
 
-            modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.BroadcastNotification", b =>
+            modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.Topic", b =>
                 {
-                    b.HasBaseType("iread_notifications_ms.DataAccess.Data.Entity.Notification");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<string>("Topic")
+                    b.Property<string>("Title")
                         .HasColumnType("text");
 
-                    b.ToTable("TopicNotification");
+                    b.HasKey("Id");
+
+                    b.ToTable("Topics");
                 });
 
             modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.SingleNotification", b =>
@@ -93,6 +97,18 @@ namespace iread_notifications_ms.Migrations
                         .HasColumnType("text");
 
                     b.ToTable("SingleNotifications");
+                });
+
+            modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.TopicNotification", b =>
+                {
+                    b.HasBaseType("iread_notifications_ms.DataAccess.Data.Entity.Notification");
+
+                    b.Property<int?>("TopicId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("TopicId");
+
+                    b.ToTable("TopicNotifications");
                 });
 
             modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.DeviceNotification", b =>
@@ -114,15 +130,6 @@ namespace iread_notifications_ms.Migrations
                     b.Navigation("Notifications");
                 });
 
-            modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.BroadcastNotification", b =>
-                {
-                    b.HasOne("iread_notifications_ms.DataAccess.Data.Entity.Notification", null)
-                        .WithOne()
-                        .HasForeignKey("iread_notifications_ms.DataAccess.Data.Entity.BroadcastNotification", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.SingleNotification", b =>
                 {
                     b.HasOne("iread_notifications_ms.DataAccess.Data.Entity.Notification", null)
@@ -132,9 +139,29 @@ namespace iread_notifications_ms.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.TopicNotification", b =>
+                {
+                    b.HasOne("iread_notifications_ms.DataAccess.Data.Entity.Notification", null)
+                        .WithOne()
+                        .HasForeignKey("iread_notifications_ms.DataAccess.Data.Entity.TopicNotification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("iread_notifications_ms.DataAccess.Data.Entity.Topic", "Topic")
+                        .WithMany("Notifications")
+                        .HasForeignKey("TopicId");
+
+                    b.Navigation("Topic");
+                });
+
             modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.Device", b =>
                 {
                     b.Navigation("DeviceNotifications");
+                });
+
+            modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.Topic", b =>
+                {
+                    b.Navigation("Notifications");
                 });
 
             modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.SingleNotification", b =>
