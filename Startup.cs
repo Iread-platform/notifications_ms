@@ -92,7 +92,7 @@ namespace iread_notifications_ms
             services.AddScoped<IPublicRepo, PublicRepo>();
             services.AddScoped<IFirebaseMessagingService, FirebaseMessagingService>();
             services.AddScoped<NotificationService>();
-
+            services.AddScoped<DeviceService>();
             IMapper mapper = new MapperConfiguration(config =>
             {
                 config.AddProfile<AutoMapperProfile>();
