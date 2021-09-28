@@ -17,13 +17,15 @@ namespace iread_notifications_ms.Controllers
 
         private readonly IMapper _mapper;
         private readonly TopicService _topicService;
+        private readonly DeviceService _deviceService;
         private readonly NotificationService _notificationService;
         private readonly IFirebaseMessagingService _firebaseMessagingService;
-        public NotificationController(TopicService topicService, NotificationService service, IMapper mapper, IFirebaseMessagingService firebaseMessagingService)
+        public NotificationController(TopicService topicService, DeviceService deviceService, NotificationService service, IMapper mapper, IFirebaseMessagingService firebaseMessagingService)
         {
             _notificationService = service;
             _mapper = mapper;
             _topicService = topicService;
+            _deviceService = deviceService;
             _firebaseMessagingService = firebaseMessagingService;
         }
 
@@ -42,6 +44,7 @@ namespace iread_notifications_ms.Controllers
                 return BadRequest(UserMessages.ModelStateParser(ModelState));
             }
             SingleNotification Addednotification = await _notificationService.Sendnotification(_mapper.Map<SingleNotification>(notificationDto)) as SingleNotification;
+            Addednotification.Token = (await _deviceService.GetDevice(notificationDto.user)).Token;
             if (Addednotification != null)
             {
                 try
