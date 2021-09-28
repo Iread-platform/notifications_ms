@@ -9,7 +9,7 @@ namespace iread_notifications_ms.Web.Service
 
     public interface IFirebaseMessagingService
     {
-        Task<string> sendMessage(SingleNotification notification, Dictionary<string, string> data);
+        Task<string> sendMessage(SingleNotification notification, Dictionary<string, string> data = null);
         Task<string> SendTopicNotification(TopicNotification notification, Dictionary<string, string> data);
 
         Task<TopicManagementResponse> SubscribeToTopic(List<string> tokens, string topic);

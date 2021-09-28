@@ -11,6 +11,7 @@ namespace iread_notifications_ms.DataAccess.Data.Entity
     public class TopicNotification : Notification
     {
         public Topic Topic { get; set; }
+        public int TopicId { get; set; }
     }
 
 }

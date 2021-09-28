@@ -10,6 +10,6 @@ namespace iread_notifications_ms.Web.DTO
         {
             get; set;
         }
-        public string Topic { get; set; }
+        public int TopicID { get; set; }
     }
 }

@@ -16,12 +16,14 @@ namespace iread_notifications_ms.Controllers
     {
 
         private readonly IMapper _mapper;
+        private readonly TopicService _topicService;
         private readonly NotificationService _notificationService;
         private readonly IFirebaseMessagingService _firebaseMessagingService;
-        public NotificationController(NotificationService service, IMapper mapper, IFirebaseMessagingService firebaseMessagingService)
+        public NotificationController(TopicService topicService, NotificationService service, IMapper mapper, IFirebaseMessagingService firebaseMessagingService)
         {
             _notificationService = service;
             _mapper = mapper;
+            _topicService = topicService;
             _firebaseMessagingService = firebaseMessagingService;
         }
 
@@ -76,15 +78,17 @@ namespace iread_notifications_ms.Controllers
             {
                 try
                 {
-
+                    Addednotification.Topic = await _topicService.GetTopic(Addednotification.TopicId);
                     string result = await _firebaseMessagingService.SendTopicNotification(Addednotification, null);
+                    // string result = await _firebaseMessagingService.
+                    return Ok();
                 }
                 catch (System.Exception)
                 {
 
                 }
             }
-            return null;
+            return StatusCode(500, "Notifications Where not sent");
         }
 
 
