@@ -39,12 +39,14 @@ namespace iread_notifications_ms.DataAccess.Repository
 
         public async Task<Notification> Add(Notification notification)
         {
-            return (await _context.Notifications.AddAsync(notification)).Entity;
+            Notification AddedNotification = (await _context.Notifications.AddAsync(notification)).Entity;
+            await _context.SaveChangesAsync();
+            return AddedNotification;
         }
 
         public async Task<Notification> GetById(string id)
         {
-            return await _context.Notifications.Where((notification) => notification.Id.Equals(id)).FirstAsync();
+            return await _context.Notifications.FindAsync(id);
         }
 
         public async Task<bool> _Exists(string id)

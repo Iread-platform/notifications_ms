@@ -91,6 +91,38 @@ namespace iread_notifications_ms.Controllers
             return StatusCode(500, "Notifications Where not sent");
         }
 
+        [HttpPost("Multicast")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Multicast([FromBody] TopicNotificationDto notificationDto)
+        {
+            if (notificationDto == null)
+            {
+                return BadRequest(ModelState);
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(UserMessages.ModelStateParser(ModelState));
+            }
+            TopicNotification Addednotification = await _notificationService.Sendnotification(_mapper.Map<TopicNotification>(notificationDto)) as TopicNotification;
+            if (Addednotification != null)
+            {
+                try
+                {
+                    Addednotification.Topic = await _topicService.GetTopic(Addednotification.TopicId);
+                    string result = await _firebaseMessagingService.SendTopicNotification(Addednotification, null);
+                    // string result = await _firebaseMessagingService.
+                    return Ok();
+                }
+                catch (System.Exception)
+                {
+
+                }
+            }
+            return StatusCode(500, "Notifications Where not sent");
+        }
+
 
     }
 

@@ -52,8 +52,10 @@ namespace iread_notifications_ms.DataAccess.Repository
                             TopicId = topicId
                         };
                         TopicUsers addedTopicUser = (await _context.TopicUsers.AddAsync(topicUser)).Entity;
+                        await _context.SaveChangesAsync();
                         topicUsers.Add(addedTopicUser);
                     }
+
                     return topicUsers;
                 }
                 catch (System.Exception)
@@ -63,7 +65,6 @@ namespace iread_notifications_ms.DataAccess.Repository
                 }
 
             }
-            return null;
         }
 
         public async Task<Topic> GetTopic(int id)

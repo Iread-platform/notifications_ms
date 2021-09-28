@@ -79,6 +79,23 @@ namespace iread_notifications_ms.Controllers
 
         }
 
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetTopic(int id)
+        {
+
+            Topic topic = await _topicService.GetTopic(id);
+            if (topic == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(topic);
+
+        }
+
         [HttpPost("Subscribe")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
