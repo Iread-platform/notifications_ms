@@ -17,8 +17,8 @@ namespace iread_notifications_ms.Web.Service
 
         public void init()
         {
-            m_app = FirebaseApp.Create(new AppOptions() { Credential = GoogleCredential.FromFile("firebase_auth_provider.json").CreateScoped("https://www.googleapis.com/auth/firebase.messaging") });
-            m_messaging = FirebaseMessaging.GetMessaging(m_app);
+            m_app ??= FirebaseApp.Create(new AppOptions() { Credential = GoogleCredential.FromFile("firebase_auth_provider.json").CreateScoped("https://www.googleapis.com/auth/firebase.messaging") });
+            m_messaging ??= FirebaseMessaging.GetMessaging(m_app);
         }
 
         public FirebaseMessagingService()
