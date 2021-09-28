@@ -90,9 +90,10 @@ namespace iread_notifications_ms
 
             // Inject repos and services.
             services.AddScoped<IPublicRepo, PublicRepo>();
-            services.AddScoped<IFirebaseMessagingService, FirebaseMessagingService>();
+            services.AddSingleton<IFirebaseMessagingService, FirebaseMessagingService>();
             services.AddScoped<NotificationService>();
             services.AddScoped<DeviceService>();
+            services.AddScoped<TopicService>();
             IMapper mapper = new MapperConfiguration(config =>
             {
                 config.AddProfile<AutoMapperProfile>();
