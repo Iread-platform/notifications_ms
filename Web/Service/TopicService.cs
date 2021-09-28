@@ -33,11 +33,15 @@ namespace iread_notifications_ms.Web.Service
             List<Device> devices = await _publicRepo.DeviceRepo.GetUsersDevices(topicSubscribeDto.Users);
             if (devices.Count > 0)
             {
-                List<TopicUsers> topicUsers = await _publicRepo.TopicRepo.SubscribeDevices(devices, topicSubscribeDto.TopId);
+                List<TopicUsers> topicUsers = await _publicRepo.TopicRepo.SubscribeDevices(devices, topicSubscribeDto.TopicId);
                 return topicUsers;
             }
 
             return null;
+        }
+        public async Task<Topic> GetTopic(int id)
+        {
+            return await _publicRepo.TopicRepo.GetTopic(id);
         }
 
     }

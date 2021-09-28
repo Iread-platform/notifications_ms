@@ -48,7 +48,7 @@ namespace iread_notifications_ms.DataAccess.Repository
                     {
                         TopicUsers topicUser = new TopicUsers()
                         {
-                            UserId = device.Token,
+                            Token = device.Token,
                             TopicId = topicId
                         };
                         TopicUsers addedTopicUser = (await _context.TopicUsers.AddAsync(topicUser)).Entity;
@@ -65,6 +65,12 @@ namespace iread_notifications_ms.DataAccess.Repository
             }
             return null;
         }
+
+        public async Task<Topic> GetTopic(int id)
+        {
+            return await _context.Topics.FindAsync(id);
+        }
+
 
     }
 }
