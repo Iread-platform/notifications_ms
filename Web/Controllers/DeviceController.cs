@@ -28,6 +28,22 @@ namespace iread_notifications_ms.Controllers
             _firebaseMessagingService = firebaseMessagingService;
         }
 
+        [HttpGet("{userId}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetDevice(int userId)
+        {
+
+            Device device = await _deviceService.GetDevice(userId);
+            if (device == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(device);
+
+        }
         [HttpPost("Add")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

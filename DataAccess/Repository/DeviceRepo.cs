@@ -41,5 +41,9 @@ namespace iread_notifications_ms.DataAccess.Repository
         {
             return _context.Devices.Where(d => d.Token.Equals(device.Token)).Count() > 0;
         }
+        public async Task<Device> GetDevice(int id)
+        {
+            return await _context.Devices.Where(d => d.UserId == id).FirstAsync();
+        }
     }
 }

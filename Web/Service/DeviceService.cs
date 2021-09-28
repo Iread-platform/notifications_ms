@@ -26,6 +26,9 @@ namespace iread_notifications_ms.Web.Service
         {
             return await _publicRepo.DeviceRepo.GetAllDevices();
         }
-
+        public async Task<Device> GetDevice(int id)
+        {
+            return await _publicRepo.DeviceRepo.GetDevice(id);
+        }
     }
 }
