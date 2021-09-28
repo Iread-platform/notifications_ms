@@ -9,7 +9,9 @@ namespace iread_notifications_ms.DataAccess.Repository
         }
         private NotificationRepo _notificationRepo;
         private DeviceRepo _DeviceRepo;
+        private TopicRepo _TopicRepo;
         public INotificationRepo NotificationRepo => _notificationRepo ??= new NotificationRepo(_context);
         public IDeviceRepo DeviceRepo => _DeviceRepo ??= new DeviceRepo(_context);
+        public ITopicRepo TopicRepo => _TopicRepo ??= new TopicRepo(_context);
     }
 }
