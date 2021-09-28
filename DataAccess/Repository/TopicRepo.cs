@@ -65,6 +65,7 @@ namespace iread_notifications_ms.DataAccess.Repository
                 }
 
             }
+            return null;
         }
 
         public async Task<Topic> GetTopic(int id)
