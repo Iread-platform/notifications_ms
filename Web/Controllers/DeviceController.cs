@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
-using System;
+using System.Collections.Generic;
 
 using iread_notifications_ms.Web.DTO;
 using iread_notifications_ms.Web.Utils;
@@ -51,6 +51,29 @@ namespace iread_notifications_ms.Controllers
                 return Ok(device);
             }
             return Ok();
+
+        }
+
+
+        [HttpGet("All")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> AllDevices()
+        {
+
+            List<Device> devices = await _deviceService.GetAllDevices();
+            if (devices == null)
+            {
+                return NotFound();
+            }
+            if (devices.Count == 0)
+            {
+                return NotFound();
+
+            }
+
+            return Ok(devices);
 
         }
     }
