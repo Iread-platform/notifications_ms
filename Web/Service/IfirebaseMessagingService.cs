@@ -9,8 +9,6 @@ namespace iread_notifications_ms.Web.Service
 
     public interface IFirebaseMessagingService
     {
-        Message SetupNotificationMessage(SingleNotification notification, Dictionary<string, string> data);
-
         Task<string> sendMessage(SingleNotification notification, Dictionary<string, string> data);
         Task<string> SendTopicNotification(TopicNotification notification, Dictionary<string, string> data);
 

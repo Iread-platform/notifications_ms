@@ -68,7 +68,7 @@ namespace iread_notifications_ms.Web.Service
             return batchResponse;
         }
 
-        public Message SetupNotificationMessage(Entities.SingleNotification notification, Dictionary<string, string> data)
+        private Message SetupNotificationMessage(Entities.SingleNotification notification, Dictionary<string, string> data)
         {
             return new Message()
             {
