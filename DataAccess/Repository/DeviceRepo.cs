@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Collections.Generic;
 
 using iread_notifications_ms.DataAccess.Data.Entity;
 
@@ -21,9 +22,15 @@ namespace iread_notifications_ms.DataAccess.Repository
             {
                 return null;
             }
-            return (await _context.Devices.AddAsync(device)).Entity;
+            Device addedDevice = (await _context.Devices.AddAsync(device)).Entity;
+            await _context.SaveChangesAsync();
+            return addedDevice;
         }
 
+        public async Task<List<Device>> GetAllDevices()
+        {
+            return await _context.Devices.ToListAsync();
+        }
 
         public bool DeviceExists(Device device)
         {
