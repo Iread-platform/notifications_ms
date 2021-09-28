@@ -36,5 +36,35 @@ namespace iread_notifications_ms.DataAccess.Repository
         {
             return _context.Topics.Where(t => t.Title.Equals(topic.Title)).Count() > 0;
         }
+
+        public async Task<List<TopicUsers>> SubscribeDevices(List<Device> devices, int topicId)
+        {
+            if (_context.Topics.Where(t => t.Id == topicId).Count() > 0)
+            {
+                List<TopicUsers> topicUsers = new List<TopicUsers>();
+                try
+                {
+                    foreach (var device in devices)
+                    {
+                        TopicUsers topicUser = new TopicUsers()
+                        {
+                            UserId = device.Token,
+                            TopicId = topicId
+                        };
+                        TopicUsers addedTopicUser = (await _context.TopicUsers.AddAsync(topicUser)).Entity;
+                        topicUsers.Add(addedTopicUser);
+                    }
+                    return topicUsers;
+                }
+                catch (System.Exception)
+                {
+
+                    return null;
+                }
+
+            }
+            return null;
+        }
+
     }
 }

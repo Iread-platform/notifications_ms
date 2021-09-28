@@ -17,14 +17,14 @@ namespace iread_notifications_ms.Controllers
     public class TopicController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly TopicService _TopicService;
+        private readonly DeviceService _deviceService;
         private readonly TopicService _topicService;
         private readonly IFirebaseMessagingService _firebaseMessagingService;
 
 
-        public TopicController(TopicService TopicService, TopicService topicService, IMapper mapper, IFirebaseMessagingService firebaseMessagingService)
+        public TopicController(DeviceService deviceService, TopicService topicService, IMapper mapper, IFirebaseMessagingService firebaseMessagingService)
         {
-            _TopicService = TopicService;
+            _deviceService = deviceService;
             _topicService = topicService;
             _mapper = mapper;
             _firebaseMessagingService = firebaseMessagingService;
@@ -46,7 +46,7 @@ namespace iread_notifications_ms.Controllers
                 return BadRequest(UserMessages.ModelStateParser(ModelState));
             }
 
-            Topic topic = await _TopicService.AddTopic(_mapper.Map<Topic>(addTopicDto));
+            Topic topic = await _topicService.AddTopic(_mapper.Map<Topic>(addTopicDto));
 
             if (topic != null)
             {
@@ -64,7 +64,7 @@ namespace iread_notifications_ms.Controllers
         public async Task<IActionResult> AllTopics()
         {
 
-            List<Topic> topics = await _TopicService.GetAllTopics();
+            List<Topic> topics = await _topicService.GetAllTopics();
             if (topics == null)
             {
                 return NotFound();
@@ -77,6 +77,25 @@ namespace iread_notifications_ms.Controllers
 
             return Ok(topics);
 
+        }
+
+        [HttpPost("Subscribe")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Subscribe(TopicSubscribeDto topicSubscribeDto)
+        {
+
+            if (topicSubscribeDto == null)
+            {
+                return BadRequest(ModelState);
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(UserMessages.ModelStateParser(ModelState));
+            }
+            List<TopicUsers> topicUsers = await _topicService.SubscribeToTopic(topicSubscribeDto);
+            return Ok(topicUsers);
         }
     }
 

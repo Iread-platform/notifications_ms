@@ -32,6 +32,11 @@ namespace iread_notifications_ms.DataAccess.Repository
             return await _context.Devices.ToListAsync();
         }
 
+        public async Task<List<Device>> GetUsersDevices(List<int> users)
+        {
+            return await _context.Devices.Where(device => users.Contains(device.UserId)).ToListAsync();
+        }
+
         public bool DeviceExists(Device device)
         {
             return _context.Devices.Where(d => d.Token.Equals(device.Token)).Count() > 0;

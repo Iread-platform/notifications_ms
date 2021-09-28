@@ -10,6 +10,7 @@ namespace iread_notifications_ms.DataAccess.Repository
     {
         public Task<Device> AddDevice(Device device);
         public Task<List<Device>> GetAllDevices();
+        public Task<List<Device>> GetUsersDevices(List<int> users);
         public bool DeviceExists(Device device);
 
     }
