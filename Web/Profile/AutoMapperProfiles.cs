@@ -12,6 +12,7 @@ namespace iread_notifications_ms.Web.Profile
             CreateMap<Notification, NotificationDto>().ReverseMap();
 
             CreateMap<Device, AddDeviceDto>().ReverseMap();
+            CreateMap<Topic, AddTopicDto>().ReverseMap();
 
         }
     }
