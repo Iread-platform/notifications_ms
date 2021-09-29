@@ -50,6 +50,7 @@ namespace iread_notifications_ms.Controllers
                 try
                 {
                     string result = await _firebaseMessagingService.sendMessage(Addednotification, null);
+                    return Ok(result);
                 }
                 catch (System.Exception)
                 {
