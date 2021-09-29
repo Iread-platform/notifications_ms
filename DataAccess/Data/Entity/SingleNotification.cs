@@ -11,7 +11,7 @@ namespace iread_notifications_ms.DataAccess.Data.Entity
     public class SingleNotification : Notification
     {
         public string Token { get; set; }
-        public List<DeviceNotification> DeviceNotifications { get; set; }
+        public List<UsersNotification> UsersNotifications { get; set; }
     }
 
 }

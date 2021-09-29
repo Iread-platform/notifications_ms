@@ -17,14 +17,14 @@ namespace iread_notifications_ms.Controllers
     public class TopicController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly DeviceService _deviceService;
+        private readonly UserService _userService;
         private readonly TopicService _topicService;
         private readonly IFirebaseMessagingService _firebaseMessagingService;
 
 
-        public TopicController(DeviceService deviceService, TopicService topicService, IMapper mapper, IFirebaseMessagingService firebaseMessagingService)
+        public TopicController(UserService UserService, TopicService topicService, IMapper mapper, IFirebaseMessagingService firebaseMessagingService)
         {
-            _deviceService = deviceService;
+            _userService = UserService;
             _topicService = topicService;
             _mapper = mapper;
             _firebaseMessagingService = firebaseMessagingService;
@@ -111,9 +111,15 @@ namespace iread_notifications_ms.Controllers
             {
                 return BadRequest(UserMessages.ModelStateParser(ModelState));
             }
+
+            List<User> users = await _userService.GetUsers(topicSubscribeDto.Users);
+            if (users == null || users.Count == 0)
+            {
+                return BadRequest(UserMessages.USER_NO_FOUND);
+            }
             try
             {
-                List<TopicUsers> topicUsers = await _topicService.SubscribeToTopic(topicSubscribeDto);
+                List<TopicUsers> topicUsers = await _topicService.SubscribeToTopic(users, topicSubscribeDto.TopicId);
                 if (topicUsers == null)
                 {
                     return BadRequest("Devices already subscribed to theis topic");
@@ -121,12 +127,12 @@ namespace iread_notifications_ms.Controllers
                 List<string> devicesTokens = new List<string>();
                 foreach (var user in topicUsers)
                 {
-                    devicesTokens.Add(user.Token);
+                    devicesTokens.Add(user.Users.Token);
                 }
                 Topic topic = await _topicService.GetTopic(topicSubscribeDto.TopicId);
                 var topicManagementResponse = await _firebaseMessagingService.SubscribeToTopic(devicesTokens, topic.Title);
 
-                return Ok(topicUsers);
+                return Ok();
             }
             catch (System.Exception e)
             {

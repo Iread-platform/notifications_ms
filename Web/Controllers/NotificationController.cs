@@ -18,15 +18,15 @@ namespace iread_notifications_ms.Controllers
 
         private readonly IMapper _mapper;
         private readonly TopicService _topicService;
-        private readonly DeviceService _deviceService;
+        private readonly UserService _userService;
         private readonly NotificationService _notificationService;
         private readonly IFirebaseMessagingService _firebaseMessagingService;
-        public NotificationController(TopicService topicService, DeviceService deviceService, NotificationService service, IMapper mapper, IFirebaseMessagingService firebaseMessagingService)
+        public NotificationController(TopicService topicService, UserService UserService, NotificationService service, IMapper mapper, IFirebaseMessagingService firebaseMessagingService)
         {
             _notificationService = service;
             _mapper = mapper;
             _topicService = topicService;
-            _deviceService = deviceService;
+            _userService = UserService;
             _firebaseMessagingService = firebaseMessagingService;
         }
 
@@ -44,29 +44,30 @@ namespace iread_notifications_ms.Controllers
             {
                 return BadRequest(UserMessages.ModelStateParser(ModelState));
             }
-            Device userDevice = await _deviceService.GetDevice(notificationDto.user);
-            if (userDevice == null)
+            User user = await _userService.GetUser(notificationDto.user);
+            if (user == null)
             {
-                return BadRequest("User has no registered devices.");
+                return BadRequest("User has no registered devics.");
 
             }
             SingleNotification Addednotification = await _notificationService.Sendnotification(_mapper.Map<SingleNotification>(notificationDto)) as SingleNotification;
             if (Addednotification != null)
             {
-                Addednotification.Token = (await _deviceService.GetDevice(notificationDto.user)).Token;
+                Addednotification.Token = (await _userService.GetUser(notificationDto.user)).Token;
 
                 try
                 {
                     string result = await _firebaseMessagingService.sendMessage(Addednotification, null);
-                    return Ok(result);
+                    return Ok(UserMessages.NOTIFICATION_SENT);
                 }
                 catch (System.Exception)
                 {
+                    return BadRequest(UserMessages.NOTIFICATION_NOT_SENT);
 
                 }
 
             }
-            return null;
+            return BadRequest();
 
         }
 
@@ -84,22 +85,26 @@ namespace iread_notifications_ms.Controllers
             {
                 return BadRequest(UserMessages.ModelStateParser(ModelState));
             }
+            var topic = await _topicService.GetTopic(notificationDto.TopicID);
+            if (topic == null)
+            {
+                return NotFound(UserMessages.TOPIC_NO_FOUND);
+            }
             TopicNotification Addednotification = await _notificationService.Sendnotification(_mapper.Map<TopicNotification>(notificationDto)) as TopicNotification;
             if (Addednotification != null)
             {
                 try
                 {
-                    Addednotification.Topic = await _topicService.GetTopic(Addednotification.TopicId);
+                    Addednotification.Topic = topic;
                     string result = await _firebaseMessagingService.SendTopicNotification(Addednotification, null);
-                    // string result = await _firebaseMessagingService.
                     return Ok();
                 }
                 catch (System.Exception)
                 {
-
+                    return BadRequest(UserMessages.NOTIFICATION_NOT_SENT);
                 }
             }
-            return StatusCode(500, "Notifications Where not sent");
+            return StatusCode(500, UserMessages.NOTIFICATION_NOT_SENT);
         }
 
         [HttpPost("Multicast")]
@@ -116,10 +121,10 @@ namespace iread_notifications_ms.Controllers
             {
                 return BadRequest(UserMessages.ModelStateParser(ModelState));
             }
-            List<Device> devices = await _deviceService.GetUsesDevices(multicastDto.Users);
-            if (devices == null)
+            List<User> Users = await _userService.GetUsers(multicastDto.Users);
+            if (Users == null)
             {
-                return BadRequest("No Devices found for the given users.");
+                return BadRequest("No Users found for the given users.");
 
             }
             TopicNotification Addednotification = await _notificationService.Sendnotification(_mapper.Map<TopicNotification>(multicastDto)) as TopicNotification;

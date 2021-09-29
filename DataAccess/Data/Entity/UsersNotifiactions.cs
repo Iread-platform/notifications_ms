@@ -4,12 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace iread_notifications_ms.DataAccess.Data.Entity
 {
-    [Table("DeviceNotifications")]
-    public class DeviceNotification
+    [Table("UsersNotifications")]
+    public class UsersNotification
     {
         [Required]
-        public Device Devices { get; set; }
-        public string DeviceToken { get; set; }
+        public User Users { get; set; }
+        public int UserId { get; set; }
         public int NotificationId { get; set; }
         [Required]
         public SingleNotification Notifications { get; set; }

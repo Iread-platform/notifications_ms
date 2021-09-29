@@ -9,8 +9,8 @@ namespace iread_notifications_ms.DataAccess.Data.Entity
     public class TopicUsers
     {
         [Required]
-        public Device Devices { get; set; }
-        public string Token { get; set; }
+        public User Users { get; set; }
+        public int UserId { get; set; }
         public int TopicId { get; set; }
         [Required]
         public Topic Topics { get; set; }

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace iread_notifications_ms.Web.DTO
 {
-    public class AddDeviceDto
+    public class AddUserDto
     {
         public int UserId { get; set; }
 

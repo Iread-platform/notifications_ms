@@ -14,16 +14,16 @@ namespace iread_notifications_ms.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class DeviceController : ControllerBase
+    public class UserController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly DeviceService _deviceService;
+        private readonly UserService _UserService;
         private readonly IFirebaseMessagingService _firebaseMessagingService;
 
 
-        public DeviceController(DeviceService service, IMapper mapper, IFirebaseMessagingService firebaseMessagingService)
+        public UserController(UserService service, IMapper mapper, IFirebaseMessagingService firebaseMessagingService)
         {
-            _deviceService = service;
+            _UserService = service;
             _mapper = mapper;
             _firebaseMessagingService = firebaseMessagingService;
         }
@@ -32,25 +32,25 @@ namespace iread_notifications_ms.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetDevice(int userId)
+        public async Task<IActionResult> GetUser(int userId)
         {
 
-            Device device = await _deviceService.GetDevice(userId);
-            if (device == null)
+            User user = await _UserService.GetUser(userId);
+            if (user == null)
             {
                 return NotFound();
             }
 
-            return Ok(device);
+            return Ok(user);
 
         }
         [HttpPost("Add")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AddDevice([FromBody] AddDeviceDto addDeviceDto)
+        public async Task<IActionResult> AddUser([FromBody] AddUserDto addUserDto)
         {
-            if (addDeviceDto == null)
+            if (addUserDto == null)
             {
                 return BadRequest(ModelState);
             }
@@ -60,11 +60,11 @@ namespace iread_notifications_ms.Controllers
                 return BadRequest(UserMessages.ModelStateParser(ModelState));
             }
 
-            Device device = await _deviceService.AddDevice(_mapper.Map<Device>(addDeviceDto));
+            User User = await _UserService.AddUser(_mapper.Map<User>(addUserDto));
 
-            if (device != null)
+            if (User != null)
             {
-                return Ok(device);
+                return Ok(User);
             }
             return Ok();
 
@@ -75,21 +75,21 @@ namespace iread_notifications_ms.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AllDevices()
+        public async Task<IActionResult> AllUsers()
         {
 
-            List<Device> devices = await _deviceService.GetAllDevices();
-            if (devices == null)
+            List<User> Users = await _UserService.GetAllUsers();
+            if (Users == null)
             {
                 return NotFound();
             }
-            if (devices.Count == 0)
+            if (Users.Count == 0)
             {
                 return NotFound();
 
             }
 
-            return Ok(devices);
+            return Ok(Users);
 
         }
     }

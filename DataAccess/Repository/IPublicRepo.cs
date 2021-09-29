@@ -4,7 +4,7 @@ namespace iread_notifications_ms.DataAccess.Repository
     {
 
         INotificationRepo NotificationRepo { get; }
-        IDeviceRepo DeviceRepo { get; }
+        IUserRepo UserRepo { get; }
         ITopicRepo TopicRepo { get; }
 
     }
