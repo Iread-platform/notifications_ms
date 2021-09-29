@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 namespace iread_notifications_ms.DataAccess.Data.Entity
 {
     [Table("Notifications")]
-    public class Notification
+    public abstract class Notification
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

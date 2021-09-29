@@ -50,7 +50,7 @@ namespace iread_notifications_ms.Controllers
                 return BadRequest("User has no registered devics.");
 
             }
-            SingleNotification Addednotification = await _notificationService.Sendnotification(_mapper.Map<SingleNotification>(notificationDto)) as SingleNotification;
+            SingleNotification Addednotification = await _notificationService.SendNotification(_mapper.Map<SingleNotification>(notificationDto), notificationDto.user) as SingleNotification;
             if (Addednotification != null)
             {
                 Addednotification.Token = (await _userService.GetUser(notificationDto.user)).Token;
@@ -90,7 +90,7 @@ namespace iread_notifications_ms.Controllers
             {
                 return NotFound(UserMessages.TOPIC_NO_FOUND);
             }
-            TopicNotification Addednotification = await _notificationService.Sendnotification(_mapper.Map<TopicNotification>(notificationDto)) as TopicNotification;
+            TopicNotification Addednotification = await _notificationService.SendNotification(_mapper.Map<TopicNotification>(notificationDto), 0) as TopicNotification;
             if (Addednotification != null)
             {
                 try
@@ -127,7 +127,7 @@ namespace iread_notifications_ms.Controllers
                 return BadRequest("No Users found for the given users.");
 
             }
-            TopicNotification Addednotification = await _notificationService.Sendnotification(_mapper.Map<TopicNotification>(multicastDto)) as TopicNotification;
+            TopicNotification Addednotification = await _notificationService.SendNotification(_mapper.Map<TopicNotification>(multicastDto), 0) as TopicNotification;
             if (Addednotification != null)
             {
                 try

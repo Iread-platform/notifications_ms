@@ -17,7 +17,7 @@ namespace iread_notifications_ms.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64)
                 .HasAnnotation("ProductVersion", "5.0.10");
 
-            modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.Notification", b =>
+            modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.SingleNotification", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -37,9 +37,12 @@ namespace iread_notifications_ms.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Token")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("SingleNotifications");
                 });
 
             modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.Topic", b =>
@@ -54,6 +57,36 @@ namespace iread_notifications_ms.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Topics");
+                });
+
+            modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.TopicNotification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime");
+
+                    b.Property<TimeSpan>("SendAfter")
+                        .HasColumnType("time");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TopicId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TopicId");
+
+                    b.ToTable("TopicNotifications");
                 });
 
             modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.TopicUsers", b =>
@@ -104,26 +137,15 @@ namespace iread_notifications_ms.Migrations
                     b.ToTable("UsersNotifications");
                 });
 
-            modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.SingleNotification", b =>
-                {
-                    b.HasBaseType("iread_notifications_ms.DataAccess.Data.Entity.Notification");
-
-                    b.Property<string>("Token")
-                        .HasColumnType("text");
-
-                    b.ToTable("SingleNotifications");
-                });
-
             modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.TopicNotification", b =>
                 {
-                    b.HasBaseType("iread_notifications_ms.DataAccess.Data.Entity.Notification");
+                    b.HasOne("iread_notifications_ms.DataAccess.Data.Entity.Topic", "Topic")
+                        .WithMany("Notifications")
+                        .HasForeignKey("TopicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<int>("TopicId")
-                        .HasColumnType("int");
-
-                    b.HasIndex("TopicId");
-
-                    b.ToTable("TopicNotifications");
+                    b.Navigation("Topic");
                 });
 
             modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.TopicUsers", b =>
@@ -166,28 +188,7 @@ namespace iread_notifications_ms.Migrations
 
             modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.SingleNotification", b =>
                 {
-                    b.HasOne("iread_notifications_ms.DataAccess.Data.Entity.Notification", null)
-                        .WithOne()
-                        .HasForeignKey("iread_notifications_ms.DataAccess.Data.Entity.SingleNotification", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.TopicNotification", b =>
-                {
-                    b.HasOne("iread_notifications_ms.DataAccess.Data.Entity.Notification", null)
-                        .WithOne()
-                        .HasForeignKey("iread_notifications_ms.DataAccess.Data.Entity.TopicNotification", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("iread_notifications_ms.DataAccess.Data.Entity.Topic", "Topic")
-                        .WithMany("Notifications")
-                        .HasForeignKey("TopicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Topic");
+                    b.Navigation("UsersNotifications");
                 });
 
             modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.Topic", b =>
@@ -202,11 +203,6 @@ namespace iread_notifications_ms.Migrations
                     b.Navigation("UsersNotifications");
 
                     b.Navigation("UserTopics");
-                });
-
-            modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.SingleNotification", b =>
-                {
-                    b.Navigation("UsersNotifications");
                 });
 #pragma warning restore 612, 618
         }

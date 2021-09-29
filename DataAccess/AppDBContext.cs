@@ -15,10 +15,6 @@ namespace iread_notifications_ms.DataAccess
             get; set;
         }
 
-        public DbSet<Notification> Notifications
-        {
-            get; set;
-        }
         public DbSet<TopicNotification> TopicNotifications
         {
             get; set;

@@ -22,36 +22,51 @@ namespace iread_notifications_ms.DataAccess.Repository
         }
 
 
-        public async Task<SingleNotification> SendSingle(SingleNotification notification)
+        public async Task<SingleNotification> SendSingle(SingleNotification notification, int user)
         {
-            return (await _context.SingleNotifications.AddAsync(notification)).Entity;
+            SingleNotification addedNotification = (await _context.SingleNotifications.AddAsync(notification)).Entity;
+            await _context.SaveChangesAsync();
+            await _context.DeviceNotifications.AddAsync(new UsersNotification()
+            {
+                NotificationId = addedNotification.Id,
+                UserId = user
+            });
+            await _context.SaveChangesAsync();
+            return addedNotification;
         }
         public async Task<TopicNotification> Broadcast(TopicNotification notification)
         {
-            return (await _context.TopicNotifications.AddAsync(notification)).Entity;
-
-        }
-        public List<Notification> GetAll()
-        {
-            return _context.Notifications.ToList();
-
-        }
-
-        public async Task<Notification> Add(Notification notification)
-        {
-            Notification AddedNotification = (await _context.Notifications.AddAsync(notification)).Entity;
+            TopicNotification addedNotification = (await _context.TopicNotifications.AddAsync(notification)).Entity;
             await _context.SaveChangesAsync();
-            return AddedNotification;
+            return addedNotification;
+
+        }
+        public async Task<List<UsersNotification>> GetUserNotifications(int user)
+        {
+            return await _context.DeviceNotifications.Where(dn => dn.UserId == user).ToListAsync();
         }
 
-        public async Task<Notification> GetById(string id)
-        {
-            return await _context.Notifications.FindAsync(id);
-        }
+        // public List<Notification> GetAll()
+        // {
+        //     return _context.Notifications.ToList();
 
-        public async Task<bool> _Exists(string id)
-        {
-            return await _context.Notifications.AnyAsync(notification => notification.Id.Equals(id));
-        }
+        // }
+
+        // public async Task<Notification> Add(Notification notification)
+        // {
+        //     Notification AddedNotification = (await _context.Notifications.AddAsync(notification)).Entity;
+        //     await _context.SaveChangesAsync();
+        //     return AddedNotification;
+        // }
+
+        // public async Task<Notification> GetById(string id)
+        // {
+        //     return await _context.Notifications.FindAsync(id);
+        // }
+
+        // public async Task<bool> _Exists(string id)
+        // {
+        //     return await _context.Notifications.AnyAsync(notification => notification.Id.Equals(id));
+        // }
     }
 }
