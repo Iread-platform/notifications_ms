@@ -43,7 +43,7 @@ namespace iread_notifications_ms.DataAccess.Repository
         }
         public async Task<Device> GetDevice(int id)
         {
-            return await _context.Devices.Where(d => d.UserId == id).FirstAsync();
+            return await _context.Devices.Where(d => d.UserId == id).SingleOrDefaultAsync();
         }
     }
 }
