@@ -12,6 +12,8 @@ namespace iread_notifications_ms.Web.Service
         Task<string> sendMessage(SingleNotification notification, Dictionary<string, string> data = null);
         Task<string> SendTopicNotification(TopicNotification notification, Dictionary<string, string> data);
 
+        Task<TopicManagementResponse> UnSubscribeToTopic(List<string> tokens, string topic);
+
         Task<TopicManagementResponse> SubscribeToTopic(List<string> tokens, string topic);
         void init();
 

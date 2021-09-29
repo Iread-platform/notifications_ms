@@ -53,6 +53,11 @@ namespace iread_notifications_ms.Web.Service
             return await m_messaging.SubscribeToTopicAsync(tokens, topic);
         }
 
+        public async Task<TopicManagementResponse> UnSubscribeToTopic(List<string> tokens, string topic)
+        {
+            return await m_messaging.UnsubscribeFromTopicAsync(tokens, topic);
+        }
+
         public async Task<BatchResponse> sendToMnyDevices(List<string> tokens, string title, string body, Priority priority, Dictionary<string, string> data = null, string image = null)
         {
             BatchResponse batchResponse = await m_messaging.SendMulticastAsync(
@@ -82,6 +87,47 @@ namespace iread_notifications_ms.Web.Service
                 },
                 // Data = data,
             };
+        }
+        private string exceptionHandler(FirebaseException e)
+        {
+            if (e is FirebaseMessagingException)
+            {
+                switch ((e as FirebaseMessagingException).MessagingErrorCode)
+                {
+                    case MessagingErrorCode.Internal:
+                        {
+                            return "Internal server error";
+                        }
+                    case MessagingErrorCode.Unavailable:
+                        {
+                            return "Messaging serves is not available";
+                        }
+                    case MessagingErrorCode.SenderIdMismatch:
+                        {
+                            return "Sender id and registered id do not match.";
+                        }
+                    case MessagingErrorCode.Unregistered:
+                        {
+                            return "Unregistered device token.";
+                        }
+                    default:
+                        return "Firebase internal error";
+
+                }
+            }
+            switch (e.ErrorCode)
+            {
+                case ErrorCode.InvalidArgument:
+                    {
+                        return "Invalid request arguments.";
+                    }
+                case ErrorCode.NotFound:
+                    {
+                        return "Requested records are not found.";
+                    }
+
+                default: return "Unknown error.";
+            }
         }
     }
 }
