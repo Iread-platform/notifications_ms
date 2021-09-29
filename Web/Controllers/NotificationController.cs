@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 
 using iread_notifications_ms.Web.DTO;
 using iread_notifications_ms.Web.Utils;
@@ -43,10 +44,17 @@ namespace iread_notifications_ms.Controllers
             {
                 return BadRequest(UserMessages.ModelStateParser(ModelState));
             }
+            Device userDevice = await _deviceService.GetDevice(notificationDto.user);
+            if (userDevice == null)
+            {
+                return BadRequest("User has no registered devices.");
+
+            }
             SingleNotification Addednotification = await _notificationService.Sendnotification(_mapper.Map<SingleNotification>(notificationDto)) as SingleNotification;
-            Addednotification.Token = (await _deviceService.GetDevice(notificationDto.user)).Token;
             if (Addednotification != null)
             {
+                Addednotification.Token = (await _deviceService.GetDevice(notificationDto.user)).Token;
+
                 try
                 {
                     string result = await _firebaseMessagingService.sendMessage(Addednotification, null);
@@ -56,7 +64,6 @@ namespace iread_notifications_ms.Controllers
                 {
 
                 }
-
 
             }
             return null;
@@ -99,9 +106,9 @@ namespace iread_notifications_ms.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Multicast([FromBody] TopicNotificationDto notificationDto)
+        public async Task<IActionResult> Multicast([FromBody] MulticastNotificationDTo multicastDto)
         {
-            if (notificationDto == null)
+            if (multicastDto == null)
             {
                 return BadRequest(ModelState);
             }
@@ -109,7 +116,13 @@ namespace iread_notifications_ms.Controllers
             {
                 return BadRequest(UserMessages.ModelStateParser(ModelState));
             }
-            TopicNotification Addednotification = await _notificationService.Sendnotification(_mapper.Map<TopicNotification>(notificationDto)) as TopicNotification;
+            List<Device> devices = await _deviceService.GetUsesDevices(multicastDto.Users);
+            if (devices == null)
+            {
+                return BadRequest("No Devices found for the given users.");
+
+            }
+            TopicNotification Addednotification = await _notificationService.Sendnotification(_mapper.Map<TopicNotification>(multicastDto)) as TopicNotification;
             if (Addednotification != null)
             {
                 try
