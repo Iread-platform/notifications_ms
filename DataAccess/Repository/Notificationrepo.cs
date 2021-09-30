@@ -43,7 +43,7 @@ namespace iread_notifications_ms.DataAccess.Repository
         }
         public async Task<List<UsersNotification>> GetUserNotifications(int user)
         {
-            return await _context.DeviceNotifications.Where(dn => dn.UserId == user).ToListAsync();
+            return await _context.DeviceNotifications.Include(dn => dn.Notifications).Where(n => n.UserId == user).ToListAsync();
         }
 
         // public List<Notification> GetAll()

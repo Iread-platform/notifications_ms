@@ -19,6 +19,11 @@ namespace iread_notifications_ms.Web.Service
             _publicRepo = publicRepo;
         }
 
+        public async Task<List<UsersNotification>> GetUserNotifications(int userId)
+        {
+            return await _publicRepo.NotificationRepo.GetUserNotifications(userId);
+        }
+
         public async Task<Notification> SendNotification(Notification notification, int user)
         {
             try
@@ -34,11 +39,6 @@ namespace iread_notifications_ms.Web.Service
                     addedNotification = await _publicRepo.NotificationRepo.SendSingle(notification as SingleNotification, user);
 
                 }
-                // else
-                // {
-
-                //     // addedNotification = await _publicRepo.NotificationRepo.Add(notification);
-                // }
 
                 return addedNotification;
 

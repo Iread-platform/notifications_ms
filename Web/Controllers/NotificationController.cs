@@ -71,6 +71,26 @@ namespace iread_notifications_ms.Controllers
 
         }
 
+        [HttpGet("ByUserId/{id}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> AllTopics(int id)
+        {
+            List<UsersNotification> notifications = await _notificationService.GetUserNotifications(id);
+            if (notifications == null)
+            {
+                return NotFound();
+            }
+            if (notifications.Count == 0)
+            {
+                return NotFound();
+
+            }
+
+            return Ok(notifications);
+
+        }
         [HttpPost("BroadCast")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
