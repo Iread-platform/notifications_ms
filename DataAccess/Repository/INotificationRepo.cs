@@ -11,6 +11,7 @@ namespace iread_notifications_ms.DataAccess.Repository
         public Task<SingleNotification> SendSingle(SingleNotification notification, int user);
         public Task<TopicNotification> Broadcast(TopicNotification notification);
         public Task<List<SingleNotification>> GetUserNotifications(int user);
+        public Task<List<TopicNotification>> GetTopicNotifications(int topic);
         public Task<List<SingleNotification>> GetByDevice(string token);
     }
 }

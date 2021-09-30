@@ -24,6 +24,11 @@ namespace iread_notifications_ms.Web.Service
             return await _publicRepo.NotificationRepo.GetUserNotifications(userId);
         }
 
+        public async Task<List<TopicNotification>> GetTopicNotifications(int topicId)
+        {
+            return await _publicRepo.NotificationRepo.GetTopicNotifications(topicId);
+        }
+
         public async Task<Notification> SendNotification(Notification notification, int user)
         {
             try

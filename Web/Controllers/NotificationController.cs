@@ -75,7 +75,7 @@ namespace iread_notifications_ms.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AllTopics(int id)
+        public async Task<IActionResult> GetUserNotifications(int id)
         {
             List<SingleNotification> notifications = await _notificationService.GetUserNotifications(id);
 
@@ -92,6 +92,34 @@ namespace iread_notifications_ms.Controllers
             return Ok(notificationsToShow);
 
         }
+
+        [HttpGet("ByTopicId/{id}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetTopicNotifications(int id)
+        {
+            if (!await _topicService.TopicExists(id))
+            {
+                return NotFound(UserMessages.TOPIC_NO_FOUND);
+            }
+
+            List<TopicNotification> notifications = await _notificationService.GetTopicNotifications(id);
+
+            if (notifications == null)
+            {
+                return NotFound();
+            }
+            if (notifications.Count == 0)
+            {
+                return NotFound();
+
+            }
+            // List<SingletNotificationGetDto> notificationsToShow = notifications.ConvertAll<SingletNotificationGetDto>(s => _mapper.Map<SingletNotificationGetDto>(s));
+            return Ok(notifications.ConvertAll<TopicNotificationGetDto>(s => _mapper.Map<TopicNotificationGetDto>(s)));
+
+        }
+
         [HttpPost("BroadCast")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
