@@ -37,6 +37,11 @@ namespace iread_notifications_ms.DataAccess.Repository
             return _context.Topics.Where(t => t.Title.Equals(topic.Title)).Count() > 0;
         }
 
+        public async Task<bool> TopicExists(int topic)
+        {
+            return (await _context.Topics.FindAsync(topic)) != null;
+        }
+
         public async Task<Topic> SubscribeUsers(List<User> users, int topicId)
         {
             if (_context.Topics.Where(t => t.TopicId == topicId).Count() > 0)

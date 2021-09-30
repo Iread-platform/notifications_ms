@@ -18,13 +18,15 @@ namespace iread_notifications_ms.Controllers
     {
         private readonly IMapper _mapper;
         private readonly UserService _UserService;
+        private readonly TopicService _topicService;
         private readonly IFirebaseMessagingService _firebaseMessagingService;
 
 
-        public UserController(UserService service, IMapper mapper, IFirebaseMessagingService firebaseMessagingService)
+        public UserController(UserService service, TopicService topicService, IMapper mapper, IFirebaseMessagingService firebaseMessagingService)
         {
             _UserService = service;
             _mapper = mapper;
+            _topicService = topicService;
             _firebaseMessagingService = firebaseMessagingService;
         }
 
@@ -90,6 +92,32 @@ namespace iread_notifications_ms.Controllers
             }
 
             return Ok(Users);
+
+        }
+
+        [HttpGet("ByTopic/{id}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetByTopicId(int id)
+        {
+
+            if (!await _topicService.TopicExists(id))
+            {
+                return BadRequest(UserMessages.TOPIC_NO_FOUND);
+            }
+            List<User> users = await _UserService.GetUserByTopic(id);
+            if (users == null)
+            {
+                return NotFound();
+            }
+            if (users.Count == 0)
+            {
+                return NotFound();
+            }
+
+
+            return Ok(users.ConvertAll<UserGetDto>(u => _mapper.Map<UserGetDto>(u)));
 
         }
     }

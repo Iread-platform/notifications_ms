@@ -37,6 +37,16 @@ namespace iread_notifications_ms.DataAccess.Repository
             return await _context.Users.Where(u => users.Contains(u.UserId)).ToListAsync();
         }
 
+        public async Task<List<User>> GetUsersByTopic(int topicId)
+        {
+            Topic topic = await _context.Topics.Include(t => t.Users).Where(t => t.TopicId == topicId).FirstOrDefaultAsync();
+            if (topic == null)
+            {
+                return null;
+            }
+            return topic.Users.ToList();
+        }
+
         public bool UserExists(User User)
         {
             return _context.Users.Where(d => d.Token.Equals(User.Token)).Count() > 0;

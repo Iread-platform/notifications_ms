@@ -22,6 +22,10 @@ namespace iread_notifications_ms.Web.Service
         {
             return await _publicRepo.TopicRepo.AddTopic(Topic);
         }
+        public async Task<bool> TopicExists(int id)
+        {
+            return await _publicRepo.TopicRepo.TopicExists(id);
+        }
 
         public async Task<List<Topic>> GetAllTopics()
         {
