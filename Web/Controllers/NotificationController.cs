@@ -77,7 +77,7 @@ namespace iread_notifications_ms.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AllTopics(int id)
         {
-            List<UsersNotification> notifications = await _notificationService.GetUserNotifications(id);
+            List<SingleNotification> notifications = await _notificationService.GetUserNotifications(id);
             if (notifications == null)
             {
                 return NotFound();

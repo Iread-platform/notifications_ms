@@ -19,7 +19,7 @@ namespace iread_notifications_ms.Web.Service
             _publicRepo = publicRepo;
         }
 
-        public async Task<List<UsersNotification>> GetUserNotifications(int userId)
+        public async Task<List<SingleNotification>> GetUserNotifications(int userId)
         {
             return await _publicRepo.NotificationRepo.GetUserNotifications(userId);
         }

@@ -26,11 +26,11 @@ namespace iread_notifications_ms.DataAccess.Repository
         {
             SingleNotification addedNotification = (await _context.SingleNotifications.AddAsync(notification)).Entity;
             await _context.SaveChangesAsync();
-            await _context.DeviceNotifications.AddAsync(new UsersNotification()
-            {
-                NotificationId = addedNotification.Id,
-                UserId = user
-            });
+            // await _context.DeviceNotifications.AddAsync(new UsersNotification()
+            // {
+            //     NotificationId = addedNotification.Id,
+            //     UserId = user
+            // });
             await _context.SaveChangesAsync();
             return addedNotification;
         }
@@ -41,9 +41,9 @@ namespace iread_notifications_ms.DataAccess.Repository
             return addedNotification;
 
         }
-        public async Task<List<UsersNotification>> GetUserNotifications(int user)
+        public async Task<List<SingleNotification>> GetUserNotifications(int user)
         {
-            return await _context.DeviceNotifications.Include(dn => dn.Notifications).Where(n => n.UserId == user).ToListAsync();
+            return (await _context.Users.FindAsync(user)).Notifications.ToList();
         }
 
         // public List<Notification> GetAll()

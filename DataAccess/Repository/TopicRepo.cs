@@ -37,32 +37,43 @@ namespace iread_notifications_ms.DataAccess.Repository
             return _context.Topics.Where(t => t.Title.Equals(topic.Title)).Count() > 0;
         }
 
-        public async Task<List<TopicUsers>> SubscribeUsers(List<User> Users, int topicId)
+        public async Task<Topic> SubscribeUsers(List<User> users, int topicId)
         {
-            if (_context.Topics.Where(t => t.Id == topicId).Count() > 0)
+            if (_context.Topics.Where(t => t.TopicId == topicId).Count() > 0)
             {
-                List<TopicUsers> topicUsers = new List<TopicUsers>();
-                try
-                {
-                    foreach (var user in Users)
-                    {
-                        TopicUsers topicUser = new TopicUsers()
-                        {
-                            UserId = user.UserId,
-                            TopicId = topicId
-                        };
-                        TopicUsers addedTopicUser = (await _context.TopicUsers.AddAsync(topicUser)).Entity;
-                        await _context.SaveChangesAsync();
-                        topicUsers.Add(addedTopicUser);
-                    }
 
-                    return topicUsers;
-                }
-                catch (System.Exception)
-                {
+                Topic topic = await _context.Topics.FindAsync(topicId);
+                topic.Users ??= new List<User>();
+                users.AddRange(topic.Users);
+                topic.Users = users;
+                _context.Topics.Update(topic);
+                await _context.SaveChangesAsync();
+                return topic;
+                // List<TopicUsers> topicUsers = new List<TopicUsers>();
+                // try
+                // {
+                //     _context.Topics.get
+                //     foreach (var user in Users)
+                //     {
+                //         TopicUsers topicUser = new TopicUsers()
+                //         {
+                //             UserId = user.UserId,
+                //             TopicId = topicId,
+                //             Topics = 
 
-                    return null;
-                }
+                //         };
+                //         TopicUsers addedTopicUser = (await _context.TopicUsers.AddAsync(topicUser)).Entity;
+                //         await _context.SaveChangesAsync();
+                //         topicUsers.Add(addedTopicUser);
+                //     }
+
+                //     return topicUsers;
+                // }
+                // catch (System.Exception)
+                // {
+
+                //     return null;
+                // }
 
             }
             return null;
@@ -70,7 +81,7 @@ namespace iread_notifications_ms.DataAccess.Repository
 
         public async Task<Topic> GetTopic(int id)
         {
-            return await _context.Topics.FindAsync(id);
+            return await _context.Topics.Include(t => t.Users).FirstOrDefaultAsync(t => t.TopicId == id);
         }
 
 

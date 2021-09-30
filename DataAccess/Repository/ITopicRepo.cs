@@ -11,7 +11,7 @@ namespace iread_notifications_ms.DataAccess.Repository
         public Task<Topic> AddTopic(Topic topic);
         public Task<Topic> GetTopic(int id);
         public Task<List<Topic>> GetAllTopics();
-        public Task<List<TopicUsers>> SubscribeUsers(List<User> users, int topicId);
+        public Task<Topic> SubscribeUsers(List<User> users, int topicId);
         public bool TopicExists(Topic topic);
 
     }

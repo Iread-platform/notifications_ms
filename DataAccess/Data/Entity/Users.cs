@@ -15,7 +15,9 @@ namespace iread_notifications_ms.DataAccess.Data.Entity
         [Key]
         [Required]
         public int UserId { get; set; }
-        public List<UsersNotification> UsersNotifications { get; set; }
-        public List<TopicUsers> UserTopics { get; set; }
+        // public List<UsersNotification> UsersNotifications { get; set; }
+        // public List<TopicUsers> UserTopics { get; set; }
+        public ICollection<Topic> Topics { get; set; }
+        public ICollection<SingleNotification> Notifications { get; set; }
     }
 }
