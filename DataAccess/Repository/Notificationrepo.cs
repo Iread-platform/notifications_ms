@@ -36,7 +36,7 @@ namespace iread_notifications_ms.DataAccess.Repository
         }
         public async Task<List<SingleNotification>> GetUserNotifications(int user)
         {
-            return (await _context.Users.FindAsync(user)).Notifications.ToList();
+            return await _context.SingleNotifications.Where(sn => sn.UserId == user).ToListAsync();
         }
 
     }

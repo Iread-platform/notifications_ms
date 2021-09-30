@@ -44,7 +44,8 @@ namespace iread_notifications_ms
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers().AddNewtonsoftJson(options =>
+            services.AddControllers()
+            .AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
 );
             services.AddDbContext<AppDbContext>(

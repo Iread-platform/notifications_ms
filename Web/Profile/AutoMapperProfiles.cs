@@ -8,6 +8,7 @@ namespace iread_notifications_ms.Web.Profile
         public AutoMapperProfile()
         {
             CreateMap<SingleNotification, SingletNotificationDto>().ReverseMap();
+            CreateMap<SingleNotification, SingletNotificationGetDto>().ReverseMap();
             CreateMap<TopicNotification, TopicNotificationDto>().ReverseMap();
             CreateMap<Notification, NotificationDto>().ReverseMap();
 

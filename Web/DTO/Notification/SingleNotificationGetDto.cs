@@ -1,8 +1,8 @@
-using System.Collections.Generic;
+using System;
 
 namespace iread_notifications_ms.Web.DTO
 {
-    public class SingletNotificationDto
+    public class SingletNotificationGetDto
     {
         public string Title { get; set; }
 
@@ -11,5 +11,8 @@ namespace iread_notifications_ms.Web.DTO
             get; set;
         }
         public int UserId { get; set; }
+        public DateTime created { get; set; }
+        public TimeSpan SendAfter { get; set; }
+
     }
 }

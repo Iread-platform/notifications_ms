@@ -44,16 +44,16 @@ namespace iread_notifications_ms.Controllers
             {
                 return BadRequest(UserMessages.ModelStateParser(ModelState));
             }
-            User user = await _userService.GetUser(notificationDto.user);
+            User user = await _userService.GetUser(notificationDto.UserId);
             if (user == null)
             {
                 return BadRequest("User has no registered devics.");
 
             }
-            SingleNotification Addednotification = await _notificationService.SendNotification(_mapper.Map<SingleNotification>(notificationDto), notificationDto.user) as SingleNotification;
+            SingleNotification Addednotification = await _notificationService.SendNotification(_mapper.Map<SingleNotification>(notificationDto), notificationDto.UserId) as SingleNotification;
             if (Addednotification != null)
             {
-                Addednotification.Token = (await _userService.GetUser(notificationDto.user)).Token;
+                Addednotification.Token = (await _userService.GetUser(notificationDto.UserId)).Token;
 
                 try
                 {
@@ -78,6 +78,7 @@ namespace iread_notifications_ms.Controllers
         public async Task<IActionResult> AllTopics(int id)
         {
             List<SingleNotification> notifications = await _notificationService.GetUserNotifications(id);
+
             if (notifications == null)
             {
                 return NotFound();
@@ -87,8 +88,8 @@ namespace iread_notifications_ms.Controllers
                 return NotFound();
 
             }
-
-            return Ok(notifications);
+            List<SingletNotificationGetDto> notificationsToShow = notifications.ConvertAll<SingletNotificationGetDto>(s => _mapper.Map<SingletNotificationGetDto>(s));
+            return Ok(notificationsToShow);
 
         }
         [HttpPost("BroadCast")]
