@@ -4,7 +4,7 @@ using MySql.EntityFrameworkCore.Metadata;
 
 namespace iread_notifications_ms.Migrations
 {
-    public partial class trydirectmanytomany : Migration
+    public partial class intialmigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -22,10 +22,23 @@ namespace iread_notifications_ms.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Token = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.UserId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TopicNotifications",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    TopicNotificationId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     TopicId = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "text", nullable: false),
@@ -35,7 +48,7 @@ namespace iread_notifications_ms.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TopicNotifications", x => x.Id);
+                    table.PrimaryKey("PK_TopicNotifications", x => x.TopicNotificationId);
                     table.ForeignKey(
                         name: "FK_TopicNotifications_Topics_TopicId",
                         column: x => x.TopicId,
@@ -45,30 +58,10 @@ namespace iread_notifications_ms.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
-                {
-                    UserId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    Token = table.Column<string>(type: "varchar(767)", nullable: false),
-                    TopicId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.UserId);
-                    table.ForeignKey(
-                        name: "FK_Users_Topics_TopicId",
-                        column: x => x.TopicId,
-                        principalTable: "Topics",
-                        principalColumn: "TopicId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "SingleNotifications",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    SingleNotificationId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     Token = table.Column<string>(type: "text", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: true),
@@ -79,13 +72,37 @@ namespace iread_notifications_ms.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SingleNotifications", x => x.Id);
+                    table.PrimaryKey("PK_SingleNotifications", x => x.SingleNotificationId);
                     table.ForeignKey(
                         name: "FK_SingleNotifications_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TopicUser",
+                columns: table => new
+                {
+                    TopicsTopicId = table.Column<int>(type: "int", nullable: false),
+                    UsersUserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TopicUser", x => new { x.TopicsTopicId, x.UsersUserId });
+                    table.ForeignKey(
+                        name: "FK_TopicUser_Topics_TopicsTopicId",
+                        column: x => x.TopicsTopicId,
+                        principalTable: "Topics",
+                        principalColumn: "TopicId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TopicUser_Users_UsersUserId",
+                        column: x => x.UsersUserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -99,15 +116,9 @@ namespace iread_notifications_ms.Migrations
                 column: "TopicId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_Token",
-                table: "Users",
-                column: "Token",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_TopicId",
-                table: "Users",
-                column: "TopicId");
+                name: "IX_TopicUser_UsersUserId",
+                table: "TopicUser",
+                column: "UsersUserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -119,10 +130,13 @@ namespace iread_notifications_ms.Migrations
                 name: "TopicNotifications");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "TopicUser");
 
             migrationBuilder.DropTable(
                 name: "Topics");
+
+            migrationBuilder.DropTable(
+                name: "Users");
         }
     }
 }

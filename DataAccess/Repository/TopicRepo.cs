@@ -49,32 +49,6 @@ namespace iread_notifications_ms.DataAccess.Repository
                 _context.Topics.Update(topic);
                 await _context.SaveChangesAsync();
                 return topic;
-                // List<TopicUsers> topicUsers = new List<TopicUsers>();
-                // try
-                // {
-                //     _context.Topics.get
-                //     foreach (var user in Users)
-                //     {
-                //         TopicUsers topicUser = new TopicUsers()
-                //         {
-                //             UserId = user.UserId,
-                //             TopicId = topicId,
-                //             Topics = 
-
-                //         };
-                //         TopicUsers addedTopicUser = (await _context.TopicUsers.AddAsync(topicUser)).Entity;
-                //         await _context.SaveChangesAsync();
-                //         topicUsers.Add(addedTopicUser);
-                //     }
-
-                //     return topicUsers;
-                // }
-                // catch (System.Exception)
-                // {
-
-                //     return null;
-                // }
-
             }
             return null;
         }

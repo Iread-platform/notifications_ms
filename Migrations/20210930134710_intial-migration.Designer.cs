@@ -9,8 +9,8 @@ using iread_notifications_ms.DataAccess;
 namespace iread_notifications_ms.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210930023743_try-direct-many-to-manyw")]
-    partial class trydirectmanytomanyw
+    [Migration("20210930134710_intial-migration")]
+    partial class intialmigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,9 +19,24 @@ namespace iread_notifications_ms.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64)
                 .HasAnnotation("ProductVersion", "5.0.10");
 
+            modelBuilder.Entity("TopicUser", b =>
+                {
+                    b.Property<int>("TopicsTopicId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsersUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TopicsTopicId", "UsersUserId");
+
+                    b.HasIndex("UsersUserId");
+
+                    b.ToTable("TopicUser");
+                });
+
             modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.SingleNotification", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("SingleNotificationId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
@@ -45,7 +60,7 @@ namespace iread_notifications_ms.Migrations
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("SingleNotificationId");
 
                     b.HasIndex("UserId");
 
@@ -68,7 +83,7 @@ namespace iread_notifications_ms.Migrations
 
             modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.TopicNotification", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("TopicNotificationId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
@@ -89,7 +104,7 @@ namespace iread_notifications_ms.Migrations
                     b.Property<int>("TopicId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("TopicNotificationId");
 
                     b.HasIndex("TopicId");
 
@@ -106,20 +121,30 @@ namespace iread_notifications_ms.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("TopicId")
-                        .HasColumnType("int");
-
                     b.HasKey("UserId");
 
-                    b.HasIndex("TopicId");
-
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("TopicUser", b =>
+                {
+                    b.HasOne("iread_notifications_ms.DataAccess.Data.Entity.Topic", null)
+                        .WithMany()
+                        .HasForeignKey("TopicsTopicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("iread_notifications_ms.DataAccess.Data.Entity.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.SingleNotification", b =>
                 {
                     b.HasOne("iread_notifications_ms.DataAccess.Data.Entity.User", "User")
-                        .WithMany()
+                        .WithMany("Notifications")
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
@@ -136,18 +161,14 @@ namespace iread_notifications_ms.Migrations
                     b.Navigation("Topic");
                 });
 
-            modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.User", b =>
-                {
-                    b.HasOne("iread_notifications_ms.DataAccess.Data.Entity.Topic", null)
-                        .WithMany("Users")
-                        .HasForeignKey("TopicId");
-                });
-
             modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.Topic", b =>
                 {
                     b.Navigation("TopicNotification");
+                });
 
-                    b.Navigation("Users");
+            modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.User", b =>
+                {
+                    b.Navigation("Notifications");
                 });
 #pragma warning restore 612, 618
         }
