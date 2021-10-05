@@ -55,16 +55,9 @@ namespace iread_notifications_ms.Controllers
             {
                 Addednotification.Token = (await _userService.GetUser(notificationDto.UserId)).Token;
 
-                try
-                {
-                    string result = await _firebaseMessagingService.sendMessage(Addednotification, null);
-                    return Ok(UserMessages.NOTIFICATION_SENT);
-                }
-                catch (System.Exception)
-                {
-                    return BadRequest(UserMessages.NOTIFICATION_NOT_SENT);
-
-                }
+                bool isSent = await _firebaseMessagingService.sendMessage(Addednotification, null);
+                return isSent ? Ok(UserMessages.NOTIFICATION_SENT)
+                    : BadRequest(UserMessages.NOTIFICATION_NOT_SENT);
 
             }
             return BadRequest();
@@ -142,16 +135,10 @@ namespace iread_notifications_ms.Controllers
             TopicNotification Addednotification = await _notificationService.SendNotification(_mapper.Map<TopicNotification>(notificationDto), 0) as TopicNotification;
             if (Addednotification != null)
             {
-                try
-                {
-                    Addednotification.Topic = topic;
-                    string result = await _firebaseMessagingService.SendTopicNotification(Addednotification, null);
-                    return Ok();
-                }
-                catch (System.Exception)
-                {
-                    return BadRequest(UserMessages.NOTIFICATION_NOT_SENT);
-                }
+                Addednotification.Topic = topic;
+                bool result = await _firebaseMessagingService.SendTopicNotification(Addednotification, null);
+                return result ? Ok() :
+                      BadRequest(UserMessages.NOTIFICATION_NOT_SENT);
             }
             return StatusCode(500, UserMessages.NOTIFICATION_NOT_SENT);
         }
@@ -173,7 +160,7 @@ namespace iread_notifications_ms.Controllers
             List<User> Users = await _userService.GetUsers(multicastDto.Users);
             if (Users == null)
             {
-                return BadRequest("No Users found for the given users.");
+                return BadRequest("No Users found for the given ids.");
 
             }
             TopicNotification Addednotification = await _notificationService.SendNotification(_mapper.Map<TopicNotification>(multicastDto), 0) as TopicNotification;
@@ -182,9 +169,10 @@ namespace iread_notifications_ms.Controllers
                 try
                 {
                     Addednotification.Topic = await _topicService.GetTopic(Addednotification.TopicId);
-                    string result = await _firebaseMessagingService.SendTopicNotification(Addednotification, null);
-                    // string result = await _firebaseMessagingService.
-                    return Ok();
+                    bool result = await _firebaseMessagingService.SendTopicNotification(Addednotification, null);
+
+                    return result ? Ok() :
+                     BadRequest(UserMessages.NOTIFICATION_NOT_SENT);  // string result = await _firebaseMessagingService.
                 }
                 catch (System.Exception)
                 {

@@ -4,6 +4,7 @@ using FirebaseAdmin;
 using Google.Apis.FirebaseCloudMessaging;
 using Google.Apis.Auth.OAuth2;
 using System.Threading.Tasks;
+using System;
 
 using Entities = iread_notifications_ms.DataAccess.Data.Entity;
 
@@ -25,27 +26,43 @@ namespace iread_notifications_ms.Web.Service
         {
             init();
         }
-        public async Task<string> sendMessage(Entities.SingleNotification notification, Dictionary<string, string> data = null)
+        public async Task<bool> sendMessage(Entities.SingleNotification notification, Dictionary<string, string> data = null)
         {
             Message message = SetupNotificationMessage(notification, data);
-            string response = await m_messaging.SendAsync(message);
-            return response;
+            try
+            {
+                string response = await m_messaging.SendAsync(message);
+                return response != null;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
-        public async Task<string> SendTopicNotification(Entities.TopicNotification notification, Dictionary<string, string> data)
+        public async Task<bool> SendTopicNotification(Entities.TopicNotification notification, Dictionary<string, string> data)
         {
-            string response = await m_messaging.SendAsync(new Message()
+            try
             {
-                Notification = new Notification()
+                string response = await m_messaging.SendAsync(new Message()
                 {
-                    Body = notification.Body,
-                    Title = notification.Title,
+                    Notification = new Notification()
+                    {
+                        Body = notification.Body,
+                        Title = notification.Title,
 
 
-                },
-                Topic = notification.Topic.Title
-            });
-            return response;
+                    },
+                    Topic = notification.Topic.Title
+                });
+                return response != null;
+
+            }
+            catch (Exception)
+            {
+
+            }
+            return false;
         }
 
         public async Task<TopicManagementResponse> SubscribeToTopic(List<string> tokens, string topic)
