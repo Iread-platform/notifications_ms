@@ -10,7 +10,7 @@ namespace iread_notifications_ms.Web.Service
     public interface IFirebaseMessagingService
     {
         Task<bool> sendMessage(SingleNotification notification, Dictionary<string, string> data = null);
-        Task<string> SendTopicNotification(TopicNotification notification, Dictionary<string, string> data);
+        Task<bool> SendTopicNotification(TopicNotification notification, Dictionary<string, string> data);
 
         Task<TopicManagementResponse> UnSubscribeToTopic(List<string> tokens, string topic);
 
