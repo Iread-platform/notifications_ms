@@ -11,5 +11,8 @@ namespace iread_notifications_ms.Web.DTO
             get; set;
         }
         public int TopicID { get; set; }
+
+        public ExtraDataDto ExtraData { get; set; }
+
     }
 }

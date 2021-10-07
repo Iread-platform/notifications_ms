@@ -19,6 +19,10 @@ namespace iread_notifications_ms.DataAccess.Data.Entity
         {
             get; set;
         }
-    }
+        public string ExtraData
+        {
+            get; set;
+        }
 
+    }
 }
