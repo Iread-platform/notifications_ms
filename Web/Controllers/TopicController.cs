@@ -119,7 +119,7 @@ namespace iread_notifications_ms.Controllers
             }
             try
             {
-                var topic = await _topicService.SubscribeToTopic(users, topicSubscribeDto.TopicId);
+                var topic = await _topicService.SubscribeToTopic(users, topicSubscribeDto.TopicTitle);
                 if (topic == null)
                 {
                     return BadRequest("Devices already subscribed to theis topic");
@@ -131,7 +131,6 @@ namespace iread_notifications_ms.Controllers
                 }
                 // Topic topic = await _topicService.GetTopic(topicSubscribeDto.TopicId);
                 var topicManagementResponse = await _firebaseMessagingService.SubscribeToTopic(devicesTokens, topic.Title);
-
                 return Ok();
             }
             catch (System.Exception e)

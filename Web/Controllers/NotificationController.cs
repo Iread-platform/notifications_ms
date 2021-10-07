@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
+using System.Text.Json;
 
 using iread_notifications_ms.Web.DTO;
 using iread_notifications_ms.Web.Utils;
@@ -50,13 +51,18 @@ namespace iread_notifications_ms.Controllers
                 return BadRequest("User has no registered devics.");
 
             }
-            SingleNotification Addednotification = await _notificationService.SendNotification(_mapper.Map<SingleNotification>(notificationDto), notificationDto.UserId) as SingleNotification;
+            SingleNotification notificationToAdd = _mapper.Map<SingleNotification>(notificationDto);
+            if (notificationDto.ExtraData != null)
+            {
+                notificationToAdd.ExtraData = JsonSerializer.Serialize(notificationDto.ExtraData);
+            }
+            SingleNotification Addednotification = await _notificationService.SendNotification(notificationToAdd, notificationDto.UserId) as SingleNotification;
             if (Addednotification != null)
             {
                 Addednotification.Token = (await _userService.GetUser(notificationDto.UserId)).Token;
 
-                bool isSent = await _firebaseMessagingService.sendMessage(Addednotification, null);
-                return isSent ? Ok(UserMessages.NOTIFICATION_SENT)
+                bool isSent = await _firebaseMessagingService.sendMessage(Addednotification);
+                return isSent ? Ok(notificationDto)
                     : BadRequest(UserMessages.NOTIFICATION_NOT_SENT);
 
             }
@@ -113,11 +119,11 @@ namespace iread_notifications_ms.Controllers
 
         }
 
-        [HttpPost("BroadCast")]
+        [HttpPost("broadcast-by-topic-title")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Broadcast([FromBody] TopicNotificationDto notificationDto)
+        public async Task<IActionResult> Broadcast([FromBody] TopicNotificationAddDto notificationDto)
         {
             if (notificationDto == null)
             {
@@ -127,17 +133,21 @@ namespace iread_notifications_ms.Controllers
             {
                 return BadRequest(UserMessages.ModelStateParser(ModelState));
             }
-            var topic = await _topicService.GetTopic(notificationDto.TopicID);
+            var topic = await _topicService.GetTopic(notificationDto.TopicName);
             if (topic == null)
             {
                 return NotFound(UserMessages.TOPIC_NO_FOUND);
             }
-            TopicNotification Addednotification = await _notificationService.SendNotification(_mapper.Map<TopicNotification>(notificationDto), 0) as TopicNotification;
+            TopicNotification notificationToAdd = _mapper.Map<TopicNotification>(notificationDto);
+            notificationToAdd.ExtraData = JsonSerializer.Serialize(notificationDto.ExtraData);
+            notificationToAdd.Topic = topic;
+            notificationToAdd.TopicId = topic.TopicId;
+            TopicNotification Addednotification = await _notificationService.SendNotification(notificationToAdd, 0) as TopicNotification;
             if (Addednotification != null)
             {
                 Addednotification.Topic = topic;
                 bool result = await _firebaseMessagingService.SendTopicNotification(Addednotification, null);
-                return result ? Ok() :
+                return result ? Ok(notificationDto) :
                       BadRequest(UserMessages.NOTIFICATION_NOT_SENT);
             }
             return StatusCode(500, UserMessages.NOTIFICATION_NOT_SENT);

@@ -5,6 +5,7 @@ using Google.Apis.FirebaseCloudMessaging;
 using Google.Apis.Auth.OAuth2;
 using System.Threading.Tasks;
 using System;
+using System.Text.Json;
 
 using Entities = iread_notifications_ms.DataAccess.Data.Entity;
 
@@ -53,6 +54,7 @@ namespace iread_notifications_ms.Web.Service
 
 
                     },
+                    Data = JsonSerializer.Deserialize<Dictionary<string, string>>(notification.ExtraData),
                     Topic = notification.Topic.Title
                 });
                 return response != null;
@@ -99,10 +101,8 @@ namespace iread_notifications_ms.Web.Service
                 {
                     Body = notification.Body,
                     Title = notification.Title,
-
-
                 },
-                // Data = data,
+                Data = JsonSerializer.Deserialize<Dictionary<string, string>>(notification.ExtraData)
             };
         }
         private string exceptionHandler(FirebaseException e)

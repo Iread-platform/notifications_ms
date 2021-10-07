@@ -39,9 +39,21 @@ namespace iread_notifications_ms.Web.Service
             return addedTopic;
 
         }
+
+        public async Task<Topic> SubscribeToTopic(List<User> users, string topicTitle)
+        {
+
+            Topic addedTopic = await _publicRepo.TopicRepo.SubscribeUsers(users, topicTitle);
+            return addedTopic;
+
+        }
         public async Task<Topic> GetTopic(int id)
         {
             return await _publicRepo.TopicRepo.GetTopic(id);
+        }
+        public async Task<Topic> GetTopic(string title)
+        {
+            return await _publicRepo.TopicRepo.GetTopic(title);
         }
 
     }

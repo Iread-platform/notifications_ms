@@ -22,6 +22,7 @@ namespace iread_notifications_ms.Web.Utils
         //User messages
         public const string USER_NO_NOTIFICATIONS = "This user has no notifications.";
         public const string USER_NO_FOUND = "There is no user with such info.";
+        public const string FILE_EXTENSION_NOT_ALLOWED = "File Extension is not allowed";
         public static List<String> ModelStateParser(ModelStateDictionary modelStateDictionary)
         {
             return modelStateDictionary.Values.SelectMany(x => x.Errors.Select(y => y.ErrorMessage)).ToList();
