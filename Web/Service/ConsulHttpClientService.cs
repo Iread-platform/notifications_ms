@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Consul;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
-using Microsoft.AspNetCore.Authentication;
 
 namespace iread_notifications_ms.Web.Service
 {
@@ -17,24 +16,15 @@ namespace iread_notifications_ms.Web.Service
     {
         private readonly HttpClient _client;
         private IConsulClient _consulClient;
-        private IHttpContextAccessor _httpContextAccessor;
 
-        public ConsulHttpClientService(HttpClient client, IConsulClient consulclient, IHttpContextAccessor httpContextAccessor)
+        public ConsulHttpClientService(HttpClient client, IConsulClient consulclient)
         {
             _client = client;
             _consulClient = consulclient;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<T> GetAsync<T>(string serviceName, string requestUri)
         {
-            if (_httpContextAccessor.HttpContext != null)
-            {
-                string token = await _httpContextAccessor.HttpContext.GetTokenAsync("access_token");
-
-                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            }
-
             var uri = await GetRequestUriAsync(serviceName, requestUri);
 
             var response = await _client.GetAsync(uri);
@@ -67,10 +57,8 @@ namespace iread_notifications_ms.Web.Service
 
         }
 
-
-
         public async Task<T> PostFormAsync<T>(string serviceName, string requestUri,
-            Dictionary<string, string> parameters, List<IFormFile> attachments)
+            Dictionary<string, string> parameters, List<IFormFile>? attachments)
         {
             var uri = await GetRequestUriAsync(serviceName, requestUri);
 
@@ -128,7 +116,7 @@ namespace iread_notifications_ms.Web.Service
             return JsonConvert.DeserializeObject<T>(content);
         }
 
-        public async Task<T> PutFormAsync<T>(string serviceName, string requestUri, Dictionary<string, string> parameters, List<IFormFile> attachments)
+        public async Task<T> PutFormAsync<T>(string serviceName, string requestUri, Dictionary<string, string> parameters, List<IFormFile>? attachments)
         {
             var uri = await GetRequestUriAsync(serviceName, requestUri);
 
@@ -170,9 +158,6 @@ namespace iread_notifications_ms.Web.Service
         }
 
 
-
-
-
         private async Task<Uri> GetRequestUriAsync(string serviceName, string uri)
         {
             //Get all services registered on Consul
@@ -199,7 +184,7 @@ namespace iread_notifications_ms.Web.Service
                 Port = service.Port,
                 Path = uri
             };
-
+            Console.WriteLine(uriBuilder.Uri);
             return uriBuilder.Uri;
         }
 
@@ -263,6 +248,15 @@ namespace iread_notifications_ms.Web.Service
             }
 
             return service;
+        }
+
+        public async Task<bool> Delete(string serviceName, string requestUri)
+        {
+            var uri = GetRequestUriAsync(serviceName, requestUri).Result;
+
+            var response = await _client.DeleteAsync(uri);
+
+            return response.IsSuccessStatusCode;
         }
     }
 }

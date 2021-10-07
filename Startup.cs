@@ -53,12 +53,14 @@ namespace iread_notifications_ms
            {
                options.UseLoggerFactory(_myLoggerFactory).UseMySQL(Configuration.GetConnectionString("DefaultConnection"));
            });
-            //         services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
-            //    {
-            //        var address = Configuration.GetValue<string>("ConsulConfig:Host");
-            //        consulConfig.Address = new System.Uri(address);
-            //    }
-            //    ));
+            // for consul
+            services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
+            {
+                var address = Configuration.GetValue<string>("ConsulConfig:Host");
+                consulConfig.Address = new System.Uri(address);
+            }));
+            services.AddHttpClient<IConsulHttpClientService, ConsulHttpClientService>();
+            services.AddConsulConfig(Configuration);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "iread_notifications_ms", Version = "v1" });
@@ -131,7 +133,7 @@ namespace iread_notifications_ms
             {
                 endpoints.MapControllers();
             });
-            // app.UseConsul(Configuration);
+            app.UseConsul(Configuration);
 
         }
     }
