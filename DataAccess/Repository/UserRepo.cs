@@ -49,7 +49,7 @@ namespace iread_notifications_ms.DataAccess.Repository
 
         public bool UserExists(User User)
         {
-            return _context.Users.Where(d => d.Token.Equals(User.Token)).Count() > 0;
+            return _context.Users.Where(d => d.UserId.Equals(User.UserId)).Count() > 0;
         }
         public async Task<User> GetUser(string id)
         {

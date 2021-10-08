@@ -60,11 +60,17 @@ namespace iread_notifications_ms.DataAccess.Repository
 
         public async Task<Topic> SubscribeUsers(List<User> users, string topicTitle)
         {
-            Topic topic = await _context.Topics.Include(t => t.Users).Where(t => t.Title == topicTitle).FirstAsync();
+            Topic topic = await _context.Topics.Include(t => t.Users).Where(t => t.Title == topicTitle).FirstOrDefaultAsync();
             if (topic != null)
             {
-                topic.Users ??= new List<User>();
-                topic.Users.ToList().AddRange(topic.Users.Intersect(users));
+                if (topic.Users == null)
+                {
+                    topic.Users = new List<User>();
+                }
+                foreach (User user in users)
+                {
+                    topic.Users.Add(user);
+                }
                 _context.Topics.Update(topic);
                 await _context.SaveChangesAsync();
                 return topic;
