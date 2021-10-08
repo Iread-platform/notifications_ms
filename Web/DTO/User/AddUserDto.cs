@@ -4,7 +4,7 @@ namespace iread_notifications_ms.Web.DTO
 {
     public class AddUserDto
     {
-        public int UserId { get; set; }
+        public string UserId { get; set; }
 
         public string Token
         {

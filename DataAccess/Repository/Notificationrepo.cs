@@ -20,7 +20,7 @@ namespace iread_notifications_ms.DataAccess.Repository
             return await _context.SingleNotifications.Where((notification) => notification.Token.Equals(token)).ToListAsync();
         }
 
-        public async Task<SingleNotification> SendSingle(SingleNotification notification, int user)
+        public async Task<SingleNotification> SendSingle(SingleNotification notification, string user)
         {
             SingleNotification addedNotification = (await _context.SingleNotifications.AddAsync(notification)).Entity;
             await _context.SaveChangesAsync();
@@ -34,7 +34,7 @@ namespace iread_notifications_ms.DataAccess.Repository
             return addedNotification;
 
         }
-        public async Task<List<SingleNotification>> GetUserNotifications(int user)
+        public async Task<List<SingleNotification>> GetUserNotifications(string user)
         {
             return await _context.SingleNotifications.Where(sn => sn.UserId == user).ToListAsync();
         }

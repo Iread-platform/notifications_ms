@@ -22,8 +22,8 @@ namespace iread_notifications_ms.Migrations
                     b.Property<int>("TopicsTopicId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UsersUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UsersUserId")
+                        .HasColumnType("varchar(767)");
 
                     b.HasKey("TopicsTopicId", "UsersUserId");
 
@@ -58,8 +58,8 @@ namespace iread_notifications_ms.Migrations
                     b.Property<string>("Token")
                         .HasColumnType("text");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(767)");
 
                     b.HasKey("SingleNotificationId");
 
@@ -117,9 +117,8 @@ namespace iread_notifications_ms.Migrations
 
             modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.User", b =>
                 {
-                    b.Property<int>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(767)");
 
                     b.Property<string>("Token")
                         .IsRequired()
@@ -149,9 +148,7 @@ namespace iread_notifications_ms.Migrations
                 {
                     b.HasOne("iread_notifications_ms.DataAccess.Data.Entity.User", "User")
                         .WithMany("Notifications")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });

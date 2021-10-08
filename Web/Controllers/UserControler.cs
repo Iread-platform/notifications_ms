@@ -34,7 +34,7 @@ namespace iread_notifications_ms.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetUser(int userId)
+        public async Task<IActionResult> GetUser(string userId)
         {
 
             User user = await _UserService.GetUser(userId);

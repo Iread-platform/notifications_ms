@@ -9,9 +9,9 @@ namespace iread_notifications_ms.DataAccess.Repository
     public interface IUserRepo
     {
         public Task<User> AddUser(User User);
-        public Task<User> GetUser(int id);
+        public Task<User> GetUser(string id);
         public Task<List<User>> GetAllUsers();
-        public Task<List<User>> GetUsers(List<int> users);
+        public Task<List<User>> GetUsers(List<string> users);
         public Task<List<User>> GetUsersByTopic(int topicId);
         public bool UserExists(User User);
 

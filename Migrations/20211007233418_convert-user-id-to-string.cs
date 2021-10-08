@@ -4,7 +4,7 @@ using MySql.EntityFrameworkCore.Metadata;
 
 namespace iread_notifications_ms.Migrations
 {
-    public partial class intialmigration : Migration
+    public partial class convertuseridtostring : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -25,8 +25,7 @@ namespace iread_notifications_ms.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<string>(type: "varchar(767)", nullable: false),
                     Token = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -44,7 +43,8 @@ namespace iread_notifications_ms.Migrations
                     Title = table.Column<string>(type: "text", nullable: false),
                     Created = table.Column<DateTime>(type: "datetime", nullable: false),
                     SendAfter = table.Column<TimeSpan>(type: "time", nullable: false),
-                    Body = table.Column<string>(type: "text", nullable: false)
+                    Body = table.Column<string>(type: "text", nullable: false),
+                    ExtraData = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -64,11 +64,12 @@ namespace iread_notifications_ms.Migrations
                     SingleNotificationId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     Token = table.Column<string>(type: "text", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<string>(type: "varchar(767)", nullable: true),
                     Title = table.Column<string>(type: "text", nullable: false),
                     Created = table.Column<DateTime>(type: "datetime", nullable: false),
                     SendAfter = table.Column<TimeSpan>(type: "time", nullable: false),
-                    Body = table.Column<string>(type: "text", nullable: false)
+                    Body = table.Column<string>(type: "text", nullable: false),
+                    ExtraData = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -86,7 +87,7 @@ namespace iread_notifications_ms.Migrations
                 columns: table => new
                 {
                     TopicsTopicId = table.Column<int>(type: "int", nullable: false),
-                    UsersUserId = table.Column<int>(type: "int", nullable: false)
+                    UsersUserId = table.Column<string>(type: "varchar(767)", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -21,7 +21,7 @@ namespace iread_notifications_ms.Web.Service
         {
             return await _publicRepo.UserRepo.AddUser(User);
         }
-        public async Task<List<User>> GetUsers(List<int> users)
+        public async Task<List<User>> GetUsers(List<string> users)
         {
             return await _publicRepo.UserRepo.GetUsers(users);
         }
@@ -31,7 +31,7 @@ namespace iread_notifications_ms.Web.Service
         {
             return await _publicRepo.UserRepo.GetAllUsers();
         }
-        public async Task<User> GetUser(int id)
+        public async Task<User> GetUser(string id)
         {
             return await _publicRepo.UserRepo.GetUser(id);
         }

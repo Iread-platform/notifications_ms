@@ -10,6 +10,6 @@ namespace iread_notifications_ms.Web.DTO
         {
             get; set;
         }
-        public List<int> Users;
+        public List<string> Users;
     }
 }

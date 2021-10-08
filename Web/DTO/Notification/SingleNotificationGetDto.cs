@@ -10,7 +10,7 @@ namespace iread_notifications_ms.Web.DTO
         {
             get; set;
         }
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public DateTime created { get; set; }
         public TimeSpan SendAfter { get; set; }
 

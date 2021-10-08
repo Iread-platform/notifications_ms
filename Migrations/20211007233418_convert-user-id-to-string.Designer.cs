@@ -9,8 +9,8 @@ using iread_notifications_ms.DataAccess;
 namespace iread_notifications_ms.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210930134710_intial-migration")]
-    partial class intialmigration
+    [Migration("20211007233418_convert-user-id-to-string")]
+    partial class convertuseridtostring
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,8 +24,8 @@ namespace iread_notifications_ms.Migrations
                     b.Property<int>("TopicsTopicId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UsersUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UsersUserId")
+                        .HasColumnType("varchar(767)");
 
                     b.HasKey("TopicsTopicId", "UsersUserId");
 
@@ -47,6 +47,9 @@ namespace iread_notifications_ms.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime");
 
+                    b.Property<string>("ExtraData")
+                        .HasColumnType("text");
+
                     b.Property<TimeSpan>("SendAfter")
                         .HasColumnType("time");
 
@@ -57,8 +60,8 @@ namespace iread_notifications_ms.Migrations
                     b.Property<string>("Token")
                         .HasColumnType("text");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(767)");
 
                     b.HasKey("SingleNotificationId");
 
@@ -94,6 +97,9 @@ namespace iread_notifications_ms.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime");
 
+                    b.Property<string>("ExtraData")
+                        .HasColumnType("text");
+
                     b.Property<TimeSpan>("SendAfter")
                         .HasColumnType("time");
 
@@ -113,9 +119,8 @@ namespace iread_notifications_ms.Migrations
 
             modelBuilder.Entity("iread_notifications_ms.DataAccess.Data.Entity.User", b =>
                 {
-                    b.Property<int>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(767)");
 
                     b.Property<string>("Token")
                         .IsRequired()

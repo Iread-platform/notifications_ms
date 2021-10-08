@@ -10,6 +10,5 @@ namespace iread_notifications_ms.Web.DTO
         {
             get; set;
         }
-        // public Dictionary<string, string> data { get; set; }
     }
 }

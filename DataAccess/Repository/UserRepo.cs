@@ -32,7 +32,7 @@ namespace iread_notifications_ms.DataAccess.Repository
             return await _context.Users.ToListAsync();
         }
 
-        public async Task<List<User>> GetUsers(List<int> users)
+        public async Task<List<User>> GetUsers(List<string> users)
         {
             return await _context.Users.Where(u => users.Contains(u.UserId)).ToListAsync();
         }
@@ -51,9 +51,9 @@ namespace iread_notifications_ms.DataAccess.Repository
         {
             return _context.Users.Where(d => d.Token.Equals(User.Token)).Count() > 0;
         }
-        public async Task<User> GetUser(int id)
+        public async Task<User> GetUser(string id)
         {
-            return await _context.Users.Where(d => d.UserId == id).SingleOrDefaultAsync();
+            return await _context.Users.Where(d => d.UserId.Equals(id)).SingleOrDefaultAsync();
         }
     }
 }

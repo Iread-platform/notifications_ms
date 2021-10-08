@@ -74,7 +74,7 @@ namespace iread_notifications_ms.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetUserNotifications(int id)
+        public async Task<IActionResult> GetUserNotifications(string id)
         {
             List<SingleNotification> notifications = await _notificationService.GetUserNotifications(id);
 
@@ -142,7 +142,7 @@ namespace iread_notifications_ms.Controllers
             notificationToAdd.ExtraData = JsonSerializer.Serialize(notificationDto.ExtraData);
             notificationToAdd.Topic = topic;
             notificationToAdd.TopicId = topic.TopicId;
-            TopicNotification Addednotification = await _notificationService.SendNotification(notificationToAdd, 0) as TopicNotification;
+            TopicNotification Addednotification = await _notificationService.SendNotification(notificationToAdd, null) as TopicNotification;
             if (Addednotification != null)
             {
                 Addednotification.Topic = topic;
@@ -173,7 +173,7 @@ namespace iread_notifications_ms.Controllers
                 return BadRequest("No Users found for the given ids.");
 
             }
-            TopicNotification Addednotification = await _notificationService.SendNotification(_mapper.Map<TopicNotification>(multicastDto), 0) as TopicNotification;
+            TopicNotification Addednotification = await _notificationService.SendNotification(_mapper.Map<TopicNotification>(multicastDto), null) as TopicNotification;
             if (Addednotification != null)
             {
                 try

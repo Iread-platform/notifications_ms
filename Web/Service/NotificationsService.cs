@@ -19,7 +19,7 @@ namespace iread_notifications_ms.Web.Service
             _publicRepo = publicRepo;
         }
 
-        public async Task<List<SingleNotification>> GetUserNotifications(int userId)
+        public async Task<List<SingleNotification>> GetUserNotifications(string userId)
         {
             return await _publicRepo.NotificationRepo.GetUserNotifications(userId);
         }
@@ -29,7 +29,7 @@ namespace iread_notifications_ms.Web.Service
             return await _publicRepo.NotificationRepo.GetTopicNotifications(topicId);
         }
 
-        public async Task<Notification> SendNotification(Notification notification, int user)
+        public async Task<Notification> SendNotification(Notification notification, string user)
         {
             try
             {
