@@ -9,8 +9,8 @@ using iread_notifications_ms.DataAccess;
 namespace iread_notifications_ms.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20211007233418_convert-user-id-to-string")]
-    partial class convertuseridtostring
+    [Migration("20211008141419_intial-migration")]
+    partial class intialmigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

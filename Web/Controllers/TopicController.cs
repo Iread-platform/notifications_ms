@@ -130,6 +130,10 @@ namespace iread_notifications_ms.Controllers
                     devicesTokens.Add(user.Token);
                 }
                 // Topic topic = await _topicService.GetTopic(topicSubscribeDto.TopicId);
+                if (devicesTokens.Count == 0)
+                {
+                    return Ok();
+                }
                 var topicManagementResponse = await _firebaseMessagingService.SubscribeToTopic(devicesTokens, topic.Title);
                 return Ok();
             }
@@ -141,6 +145,16 @@ namespace iread_notifications_ms.Controllers
 
 
         }
+
+        private async void SubscripeUserToAllTopics(User user)
+        {
+            List<Topic> topics = await _userService.GetUserTopics(user.UserId);
+            foreach (Topic topic in topics)
+            {
+                await _firebaseMessagingService.SubscribeToTopic(new List<string>() { user.Token }, topic.Title);
+            }
+        }
+
     }
 
 }

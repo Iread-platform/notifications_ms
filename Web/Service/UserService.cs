@@ -39,5 +39,10 @@ namespace iread_notifications_ms.Web.Service
         {
             return await _publicRepo.UserRepo.GetUsersByTopic(id);
         }
+
+        public async Task<List<Topic>> GetUserTopics(string userId)
+        {
+            return await _publicRepo.UserRepo.GetUserTopics(userId);
+        }
     }
 }

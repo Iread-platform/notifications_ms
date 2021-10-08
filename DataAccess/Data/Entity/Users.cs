@@ -10,7 +10,6 @@ namespace iread_notifications_ms.DataAccess.Data.Entity
     public class User
 
     {
-        [Required]
         public string Token { get; set; }
         [Key]
         [Required]

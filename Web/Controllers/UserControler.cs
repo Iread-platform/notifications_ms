@@ -115,10 +115,17 @@ namespace iread_notifications_ms.Controllers
             {
                 return NotFound();
             }
-
-
             return Ok(users.ConvertAll<UserGetDto>(u => _mapper.Map<UserGetDto>(u)));
 
+        }
+
+        private async void SubscripeUserToAllTopics(User user)
+        {
+            List<Topic> topics = await _UserService.GetUserTopics(user.UserId);
+            foreach (Topic topic in topics)
+            {
+                await _firebaseMessagingService.SubscribeToTopic(new List<string>() { user.Token }, topic.Title);
+            }
         }
     }
 

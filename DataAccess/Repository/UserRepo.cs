@@ -55,5 +55,12 @@ namespace iread_notifications_ms.DataAccess.Repository
         {
             return await _context.Users.Where(d => d.UserId.Equals(id)).SingleOrDefaultAsync();
         }
+
+        public async Task<List<Topic>> GetUserTopics(string userId)
+        {
+            User user = await _context.Users.Include(u => u.Topics).Where(u => u.UserId.Equals(userId)).FirstOrDefaultAsync();
+            return user.Topics.ToList();
+        }
+
     }
 }
