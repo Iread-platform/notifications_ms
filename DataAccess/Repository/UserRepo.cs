@@ -61,6 +61,11 @@ namespace iread_notifications_ms.DataAccess.Repository
             User user = await _context.Users.Include(u => u.Topics).Where(u => u.UserId.Equals(userId)).FirstOrDefaultAsync();
             return user.Topics.ToList();
         }
+        public async Task<User> GetUserByToken(string token)
+        {
+            return await _context.Users.Where(d => d.Token.Equals(token)).SingleOrDefaultAsync();
+
+        }
 
     }
 }

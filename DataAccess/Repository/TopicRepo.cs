@@ -87,6 +87,31 @@ namespace iread_notifications_ms.DataAccess.Repository
         {
             return await _context.Topics.Include(t => t.Users).FirstOrDefaultAsync(t => t.Title == title);
         }
+        public async Task UnSubscribeUserFromAllTopics(User user)
+        {
+            List<Topic> userTopics = await _context.Topics.Include(t => t.Users).Where(t => t.Users.Contains(user)).ToListAsync();
+            if (userTopics.Count > 0)
+            {
+                foreach (Topic topic in userTopics)
+                {
+                    topic.Users.Remove(user);
+                    await _context.SaveChangesAsync();
+                }
+            }
+        }
+        public async Task UnSubscribeUserFromTopic(User user, string topicTitle)
+        {
+            List<Topic> userTopics = await _context.Topics.Include(t => t.Users).Where(t => t.Title.Equals(topicTitle)).ToListAsync();
+
+            if (userTopics.Count > 0)
+            {
+                foreach (Topic topic in userTopics)
+                {
+                    topic.Users?.Remove(user);
+                    await _context.SaveChangesAsync();
+                }
+            }
+        }
 
 
     }

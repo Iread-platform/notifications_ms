@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
+using System;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 
@@ -127,14 +128,50 @@ namespace iread_notifications_ms.Controllers
                 List<string> devicesTokens = new List<string>();
                 foreach (var user in topic.Users)
                 {
-                    devicesTokens.Add(user.Token);
+                    if (!String.IsNullOrWhiteSpace(user.Token))
+                        devicesTokens.Add(user.Token);
                 }
                 // Topic topic = await _topicService.GetTopic(topicSubscribeDto.TopicId);
-                if (devicesTokens.Count == 0)
+                if (devicesTokens.Count == 0 || devicesTokens == null)
                 {
                     return Ok();
                 }
                 var topicManagementResponse = await _firebaseMessagingService.SubscribeToTopic(devicesTokens, topic.Title);
+                return Ok();
+            }
+            catch (System.Exception e)
+            {
+
+                return StatusCode(500, e.ToString());
+            }
+
+
+        }
+
+        [HttpPost("UnSubscribe")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UnSubscribe(UnSubscribeUserFromTopicDto topicSubscribeDto)
+        {
+
+            if (topicSubscribeDto == null)
+            {
+                return BadRequest(ModelState);
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(UserMessages.ModelStateParser(ModelState));
+            }
+
+            User user = await _userService.GetUser(topicSubscribeDto.User);
+            if (user == null)
+            {
+                return BadRequest(UserMessages.USER_NO_FOUND);
+            }
+            try
+            {
+                UnsubscribefromTopic(user, topicSubscribeDto.TopicTitle);
                 return Ok();
             }
             catch (System.Exception e)
@@ -153,6 +190,27 @@ namespace iread_notifications_ms.Controllers
             {
                 await _firebaseMessagingService.SubscribeToTopic(new List<string>() { user.Token }, topic.Title);
             }
+        }
+
+        private async void UnsubscribefromTopic(User user, string topicTitle)
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(user.Token))
+                {
+                    await _firebaseMessagingService.UnSubscribeToTopic(new List<string>() { user.Token }, topicTitle);
+
+                }
+                await _topicService.UnScubscribeUserFromTopic(user, topicTitle);
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
+
+
+
         }
 
     }

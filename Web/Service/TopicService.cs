@@ -55,6 +55,15 @@ namespace iread_notifications_ms.Web.Service
         {
             return await _publicRepo.TopicRepo.GetTopic(title);
         }
+        public async Task UnScubscribeUserFromAllTopics(User user)
+        {
+            await _publicRepo.TopicRepo.UnSubscribeUserFromAllTopics(user);
+        }
+        public async Task UnScubscribeUserFromTopic(User user, string topicTitle)
+        {
+            await _publicRepo.TopicRepo.UnSubscribeUserFromTopic(user, topicTitle);
+        }
+
 
     }
 }

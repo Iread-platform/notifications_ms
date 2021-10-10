@@ -61,12 +61,36 @@ namespace iread_notifications_ms.Controllers
             {
                 return BadRequest(UserMessages.ModelStateParser(ModelState));
             }
-
-            User User = await _UserService.AddUser(_mapper.Map<User>(addUserDto));
-
-            if (User != null)
+            User user1 = _mapper.Map<User>(addUserDto);
+            // If user has  a token
+            if (!string.IsNullOrWhiteSpace(user1.Token))
             {
-                return Ok(User);
+                // if the user with the same token already exists
+                if (_UserService.ExactUserExists(user1))
+                {
+                    //chaeck his supscriptions 
+                    SubscripeUserToAllTopics(user1);
+                    return StatusCode(201);
+                }
+                User user2 = await _UserService.GetUser(user1.UserId);
+                // if the user with a different or null token exists
+                if (user2 != null)
+                {
+                    // If a different token exists.
+                    if (!string.IsNullOrWhiteSpace(user2.Token))
+                    {
+
+                    }
+                    //chaeck his supscriptions 
+                    SubscripeUserToAllTopics(user1);
+                    return StatusCode(201);
+                }
+            }
+            User user = await _UserService.AddUser(user1);
+            if (user != null) SubscripeUserToAllTopics(user);
+            if (user != null)
+            {
+                return Ok(user);
             }
             return Ok();
 
@@ -126,6 +150,33 @@ namespace iread_notifications_ms.Controllers
             {
                 await _firebaseMessagingService.SubscribeToTopic(new List<string>() { user.Token }, topic.Title);
             }
+        }
+
+        private async void UnSubscripeUserToAllTopics(User user)
+        {
+            // unscubscribe from firebase topics
+
+            try
+            {
+                List<Topic> topics = await _UserService.GetUserTopics(user.UserId);
+                if (topics.Count > 0)
+                {
+                    foreach (Topic topic in topics)
+                    {
+                        await _firebaseMessagingService.UnSubscribeToTopic(new List<string>() { user.Token }, topic.Title);
+                    }
+                    await _topicService.UnScubscribeUserFromAllTopics(user);
+                }
+
+
+
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
+
         }
     }
 

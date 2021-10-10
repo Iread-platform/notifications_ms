@@ -44,5 +44,19 @@ namespace iread_notifications_ms.Web.Service
         {
             return await _publicRepo.UserRepo.GetUserTopics(userId);
         }
+
+        public bool ExactUserExists(User user)
+        {
+            return _publicRepo.UserRepo.UserExists(user);
+        }
+        public async Task<bool> UserExists(string id)
+        {
+            return await _publicRepo.UserRepo.GetUser(id) != null;
+        }
+        public async Task<User> GetUserByToken(string token)
+        {
+            return await _publicRepo.UserRepo.GetUserByToken(token);
+        }
+
     }
 }
