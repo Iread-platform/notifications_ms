@@ -178,6 +178,28 @@ namespace iread_notifications_ms.Controllers
             }
 
         }
+
+        [HttpDelete("{id}/delete")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+
+            User user = await _UserService.GetUser(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            User deletedUser = _UserService.DeleteUser(user);
+            if (deletedUser == null)
+            {
+                return StatusCode(500);
+            }
+            return Ok(deletedUser);
+
+        }
     }
 
 }

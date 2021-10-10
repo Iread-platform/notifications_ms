@@ -67,5 +67,13 @@ namespace iread_notifications_ms.DataAccess.Repository
 
         }
 
+        public User DeleteUser(User user)
+        {
+            User deletedUser = _context.Users.Remove(user).Entity;
+            _context.SaveChanges();
+            return deletedUser;
+
+        }
+
     }
 }

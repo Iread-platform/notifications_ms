@@ -58,5 +58,10 @@ namespace iread_notifications_ms.Web.Service
             return await _publicRepo.UserRepo.GetUserByToken(token);
         }
 
+        public User DeleteUser(User user)
+        {
+            return _publicRepo.UserRepo.DeleteUser(user);
+        }
+
     }
 }

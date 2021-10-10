@@ -16,6 +16,7 @@ namespace iread_notifications_ms.DataAccess.Repository
         public Task<List<User>> GetUsersByTopic(int topicId);
         public bool UserExists(User User);
         public Task<List<Topic>> GetUserTopics(string userId);
+        public User DeleteUser(User user);
 
     }
 }
