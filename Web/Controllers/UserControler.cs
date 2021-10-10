@@ -30,22 +30,20 @@ namespace iread_notifications_ms.Controllers
             _firebaseMessagingService = firebaseMessagingService;
         }
 
-        [HttpGet("{userId}")]
+        [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetUser(string userId)
+        public async Task<IActionResult> GetUser(string id)
         {
-
-            User user = await _UserService.GetUser(userId);
+            User user = await _UserService.GetUser(id);
             if (user == null)
             {
                 return NotFound();
             }
-
             return Ok(user);
-
         }
+
         [HttpPost("Add")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -119,7 +117,7 @@ namespace iread_notifications_ms.Controllers
 
         }
 
-        [HttpGet("ByTopic/{id}")]
+        [HttpGet("{id}/ByTopic")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -140,43 +138,6 @@ namespace iread_notifications_ms.Controllers
                 return NotFound();
             }
             return Ok(users.ConvertAll<UserGetDto>(u => _mapper.Map<UserGetDto>(u)));
-
-        }
-
-        private async void SubscripeUserToAllTopics(User user)
-        {
-            List<Topic> topics = await _UserService.GetUserTopics(user.UserId);
-            foreach (Topic topic in topics)
-            {
-                await _firebaseMessagingService.SubscribeToTopic(new List<string>() { user.Token }, topic.Title);
-            }
-        }
-
-        private async void UnSubscripeUserToAllTopics(User user)
-        {
-            // unscubscribe from firebase topics
-
-            try
-            {
-                List<Topic> topics = await _UserService.GetUserTopics(user.UserId);
-                if (topics.Count > 0)
-                {
-                    foreach (Topic topic in topics)
-                    {
-                        await _firebaseMessagingService.UnSubscribeToTopic(new List<string>() { user.Token }, topic.Title);
-                    }
-                    await _topicService.UnScubscribeUserFromAllTopics(user);
-                }
-
-
-
-            }
-            catch (System.Exception)
-            {
-
-                throw;
-            }
-
         }
 
         [HttpDelete("{id}/delete")]
@@ -200,6 +161,43 @@ namespace iread_notifications_ms.Controllers
             return Ok(deletedUser);
 
         }
+
+        private async void SubscripeUserToAllTopics(User user)
+        {
+            List<Topic> topics = await _UserService.GetUserTopics(user.UserId);
+            foreach (Topic topic in topics)
+            {
+                await _firebaseMessagingService.SubscribeToTopic(new List<string>() { user.Token }, topic.Title);
+            }
+        }
+
+        private async void UnSubscripeUserToAllTopics(User user)
+        {
+            // unsubscribe from firebase topics
+            try
+            {
+                List<Topic> topics = await _UserService.GetUserTopics(user.UserId);
+                if (topics.Count > 0)
+                {
+                    foreach (Topic topic in topics)
+                    {
+                        await _firebaseMessagingService.UnSubscribeToTopic(new List<string>() { user.Token }, topic.Title);
+                    }
+                    await _topicService.UnScubscribeUserFromAllTopics(user);
+                }
+
+
+
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
+
+        }
+
+
     }
 
 }
