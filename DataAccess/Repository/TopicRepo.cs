@@ -112,6 +112,12 @@ namespace iread_notifications_ms.DataAccess.Repository
                 }
             }
         }
+        public Topic DeleteTopic(Topic topic)
+        {
+            Topic deletedTopic = _context.Topics.Remove(topic).Entity;
+            _context.SaveChanges();
+            return deletedTopic;
+        }
 
 
     }

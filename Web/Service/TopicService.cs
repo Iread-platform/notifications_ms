@@ -64,6 +64,9 @@ namespace iread_notifications_ms.Web.Service
             await _publicRepo.TopicRepo.UnSubscribeUserFromTopic(user, topicTitle);
         }
 
-
+        public Topic DeleteTopic(Topic topic)
+        {
+            return _publicRepo.TopicRepo.DeleteTopic(topic);
+        }
     }
 }

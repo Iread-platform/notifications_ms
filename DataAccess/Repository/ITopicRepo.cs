@@ -18,6 +18,7 @@ namespace iread_notifications_ms.DataAccess.Repository
         public Task<bool> TopicExists(int id);
         public Task UnSubscribeUserFromAllTopics(User user);
         public Task UnSubscribeUserFromTopic(User user, string topicId);
+        public Topic DeleteTopic(Topic topic);
 
     }
 }
