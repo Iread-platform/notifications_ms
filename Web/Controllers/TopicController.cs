@@ -183,6 +183,26 @@ namespace iread_notifications_ms.Controllers
 
         }
 
+        [HttpDelete("{id}/delete")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            Topic topic = await _topicService.GetTopic(id);
+            if (topic == null)
+            {
+                return NotFound();
+            }
+
+            Topic deletedUser = _topicService.DeleteTopic(topic);
+            if (deletedUser == null)
+            {
+                return StatusCode(500);
+            }
+            return Ok(deletedUser);
+        }
+
         private async void SubscripeUserToAllTopics(User user)
         {
             List<Topic> topics = await _userService.GetUserTopics(user.UserId);
@@ -208,31 +228,8 @@ namespace iread_notifications_ms.Controllers
 
                 throw;
             }
-
-
-
         }
-        [HttpDelete("{id}/delete")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteUser(int id)
-        {
 
-            Topic topic = await _topicService.GetTopic(id);
-            if (topic == null)
-            {
-                return NotFound();
-            }
-
-            Topic deletedUser = _topicService.DeleteTopic(topic);
-            if (deletedUser == null)
-            {
-                return StatusCode(500);
-            }
-            return Ok(deletedUser);
-
-        }
 
     }
 
