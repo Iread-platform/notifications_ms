@@ -63,5 +63,10 @@ namespace iread_notifications_ms.Web.Service
             return _publicRepo.UserRepo.DeleteUser(user);
         }
 
+        public User UpdateUser(User user)
+        {
+            return _publicRepo.UserRepo.UpdateUser(user);
+        }
+
     }
 }

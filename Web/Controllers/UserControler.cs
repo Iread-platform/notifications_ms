@@ -59,32 +59,54 @@ namespace iread_notifications_ms.Controllers
             {
                 return BadRequest(UserMessages.ModelStateParser(ModelState));
             }
-            User user1 = _mapper.Map<User>(addUserDto);
-            // If user has  a token
-            if (!string.IsNullOrWhiteSpace(user1.Token))
+            User userToAdd = _mapper.Map<User>(addUserDto);
+            // If user has a token
+            if (!string.IsNullOrWhiteSpace(userToAdd.Token))
             {
                 // if the user with the same token already exists
-                if (_UserService.ExactUserExists(user1))
+                if (_UserService.ExactUserExists(userToAdd))
                 {
                     //chaeck his supscriptions 
-                    SubscripeUserToAllTopics(user1);
+                    SubscripeUserToAllTopics(userToAdd);
                     return StatusCode(201);
                 }
-                User user2 = await _UserService.GetUser(user1.UserId);
-                // if the user with a different or null token exists
-                if (user2 != null)
+                User existedUser = await _UserService.GetUser(userToAdd.UserId);
+
+                // if the same user with a different or null token exists
+                if (existedUser != null)
                 {
                     // If a different token exists.
-                    if (!string.IsNullOrWhiteSpace(user2.Token))
+                    if (!string.IsNullOrWhiteSpace(existedUser.Token))
                     {
+                        try
+                        {
+                            await ChangeUserDevice(existedUser, addUserDto.Token);
 
+                        }
+                        catch (System.Exception)
+                        {
+                            return StatusCode(500);
+                        }
                     }
-                    //chaeck his supscriptions 
-                    SubscripeUserToAllTopics(user1);
+
+                    // Add the new token and sunscribe to to
+                    // Check his subscribtions 
+                    existedUser.Token = userToAdd.Token;
+                    _UserService.UpdateUser(existedUser);
+                    SubscripeUserToAllTopics(existedUser);
                     return StatusCode(201);
                 }
+
+                // If a different user has the same token.
+                User userWithThesameToken = await _UserService.GetUserByToken(userToAdd.Token);
+                if (userWithThesameToken != null)
+                {
+                    return BadRequest(UserMessages.TOKEN_EXISTS);
+                }
+
             }
-            User user = await _UserService.AddUser(user1);
+
+            User user = await _UserService.AddUser(userToAdd);
             if (user != null) SubscripeUserToAllTopics(user);
             if (user != null)
             {
@@ -171,7 +193,22 @@ namespace iread_notifications_ms.Controllers
             }
         }
 
-        private async void UnSubscripeUserToAllTopics(User user)
+        private async Task UnSubscripeUserFromAllTopics(User user)
+        {
+            // unsubscribe from firebase topics
+            try
+            {
+                await UnSubscripeUserFromAllFirebaseTopics(user);
+                await _topicService.UnScubscribeUserFromAllTopics(user);
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
+        }
+
+        private async Task UnSubscripeUserFromAllFirebaseTopics(User user)
         {
             // unsubscribe from firebase topics
             try
@@ -183,10 +220,7 @@ namespace iread_notifications_ms.Controllers
                     {
                         await _firebaseMessagingService.UnSubscribeToTopic(new List<string>() { user.Token }, topic.Title);
                     }
-                    await _topicService.UnScubscribeUserFromAllTopics(user);
                 }
-
-
 
             }
             catch (System.Exception)
@@ -194,7 +228,37 @@ namespace iread_notifications_ms.Controllers
 
                 throw;
             }
+        }
 
+        private async void UnsubscribefromTopic(User user, string topicTitle)
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(user.Token))
+                {
+                    await _firebaseMessagingService.UnSubscribeToTopic(new List<string>() { user.Token }, topicTitle);
+
+                }
+                await _topicService.UnScubscribeUserFromTopic(user, topicTitle);
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
+        }
+
+        private async Task ChangeUserDevice(User user, string newDevice)
+        {
+            // Unscubscribe the current user from his topics.
+            await UnSubscripeUserFromAllFirebaseTopics(user);
+
+            // Update user's token.
+            user.Token = newDevice;
+            _UserService.UpdateUser(user);
+
+            // Resubscribe user to all his topics 
+            SubscripeUserToAllTopics(user);
         }
 
 

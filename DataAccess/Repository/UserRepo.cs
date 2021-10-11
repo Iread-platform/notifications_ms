@@ -47,9 +47,9 @@ namespace iread_notifications_ms.DataAccess.Repository
             return topic.Users.ToList();
         }
 
-        public bool UserExists(User User)
+        public bool UserExists(User user)
         {
-            return _context.Users.Where(d => d.UserId.Equals(User.UserId)).Count() > 0;
+            return _context.Users.Where(d => d.UserId.Equals(user.UserId) && d.Token.Equals(user.Token)).Count() > 0;
         }
         public async Task<User> GetUser(string id)
         {
@@ -72,6 +72,13 @@ namespace iread_notifications_ms.DataAccess.Repository
             User deletedUser = _context.Users.Remove(user).Entity;
             _context.SaveChanges();
             return deletedUser;
+        }
+
+        public User UpdateUser(User user)
+        {
+            User updatedUser = _context.Users.Update(user).Entity;
+            _context.SaveChanges();
+            return updatedUser;
         }
 
     }
