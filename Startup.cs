@@ -1,25 +1,41 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
+using System.IO;
+using System.Collections.Generic;
+using AutoMapper;
+using Consul;
+
+
 using iread_notifications_ms.Web.Service;
+using iread_notifications_ms.Web.Profile;
+using iread_notifications_ms.Web.Utils;
+using iread_notifications_ms.DataAccess;
+using iread_notifications_ms.DataAccess.Repository;
 
 namespace iread_notifications_ms
 {
     public class Startup
     {
+        public static readonly Microsoft.Extensions.Logging.LoggerFactory _myLoggerFactory =
+           new LoggerFactory(new[] {
+        new Microsoft.Extensions.Logging.Debug.DebugLoggerProvider()
+           });
+
+
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            Configuration = new ConfigurationBuilder()
+             .AddJsonFile(Directory.GetCurrentDirectory() + "/Properties/launchSettings.json", optional: true, reloadOnChange: true)
+             .AddJsonFile(Directory.GetCurrentDirectory() + "/appsettings.json", optional: true, reloadOnChange: true)
+             .AddEnvironmentVariables()
+             .Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -28,12 +44,67 @@ namespace iread_notifications_ms
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
-            services.AddSingleton<IFirebaseMessagingService>();
+            services.AddControllers()
+            .AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+);
+            services.AddDbContext<AppDbContext>(
+           options =>
+           {
+               options.UseLoggerFactory(_myLoggerFactory).UseMySQL(Configuration.GetConnectionString("DefaultConnection"));
+           });
+            // for consul
+            services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
+            {
+                var address = Configuration.GetValue<string>("ConsulConfig:Host");
+                consulConfig.Address = new System.Uri(address);
+            }));
+            services.AddHttpClient<IConsulHttpClientService, ConsulHttpClientService>();
+            services.AddConsulConfig(Configuration);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "iread_notifications_ms", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description =
+                           "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\"",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header,
+
+                        },
+                        new List<string>()
+                    }
+                });
             });
+
+            // Inject repos and services.
+            services.AddScoped<IPublicRepo, PublicRepo>();
+            services.AddSingleton<IFirebaseMessagingService, FirebaseMessagingService>();
+            services.AddScoped<NotificationService>();
+            services.AddScoped<UserService>();
+            services.AddScoped<TopicService>();
+            IMapper mapper = new MapperConfiguration(config =>
+            {
+                config.AddProfile<AutoMapperProfile>();
+            }).CreateMapper();
+            services.AddSingleton(mapper);
+            // services.AddHttpClient<IConsulHttpClientService, ConsulHttpClientService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,9 +117,15 @@ namespace iread_notifications_ms
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "iread_notifications_ms v1"));
             }
 
-            app.UseHttpsRedirection();
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
+                context.Database.Migrate();
+            }
+
 
             app.UseRouting();
+            app.UseCors("_myAllowSpecificOrigins");
 
             app.UseAuthorization();
 
@@ -56,6 +133,8 @@ namespace iread_notifications_ms
             {
                 endpoints.MapControllers();
             });
+            app.UseConsul(Configuration);
+
         }
     }
 }
