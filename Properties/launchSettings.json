@@ -22,12 +22,12 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "iread_notifications": {
+    "iread_notification_ms": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:5023",
+      "applicationUrl": "http://localhost:5019",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
